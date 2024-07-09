@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dsqd.amc.linkedmo.mapper.SubscribeMapper">
+
+    <resultMap id="ResultMap" type="com.dsqd.amc.linkedmo.model.Subscribe">
+        <id column="id" property="id" />
+        <result column="spcode" property="spcode" />
+        <result column="mobileno" property="mobileno" />
+        <result column="agree1" property="agree1" />
+        <result column="agree2" property="agree2" />
+        <result column="agree3" property="agree3" />
+        <result column="created_at" property="createDate" />
+        <result column="bFP" property="bFP" />
+        <result column="status" property="status" />
+
+    </resultMap>
+
+    <select id="getSubscribeAll" resultMap="ResultMap">
+        SELECT * FROM subscribe
+    </select>
+    
+    <select id="getSubscribeById" resultMap="ResultMap">
+        SELECT * FROM subscribe WHERE id=#{id}
+    </select>
+
+    <select id="getSubscribeByMobileno" resultMap="ResultMap">
+        SELECT * FROM subscribe WHERE mobileno=#{mobileno} and status='A'
+    </select>
+
+    <insert id="insertSubscribe">
+        INSERT INTO subscribe (spcode, mobileno, agree1, agree2, agree3)
+        VALUES (#{spcode}, #{mobileno}, #{agree1}, #{agree2}, #{agree3})
+    </insert>
+
+    <update id="updateSubscribe">
+        UPDATE subscribe
+        SET spcode=#{spcode},
+            mobileno=#{mobileno},
+            agree1=#{agree1},
+            agree2=#{agree2},
+            agree3=#{agree3}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteSubscribe">
+        UPDATE subscribe
+        SET status='D'
+        WHERE id=#{id}
+    </delete>
+</mapper>
