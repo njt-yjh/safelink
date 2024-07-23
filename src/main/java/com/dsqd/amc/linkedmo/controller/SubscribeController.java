@@ -47,11 +47,12 @@ public class SubscribeController {
 						}
 					});
 					
+					// 전체 가입자 정보 조회 
 					get("", (req, res) -> {
 						int code = 999;
 						String msg = "";
 						JSONObject responseJSON = new JSONObject();
-						List <Subscribe> data = service.getSubscribAll();
+						List <Subscribe> data = service.getSubscribeAll();
 						if (data != null && data.size() > 0) {
 							logger.info("All Subscribe Data retrieved: count {}", data.size());
 							res.status(200);
@@ -138,6 +139,76 @@ public class SubscribeController {
 						logger.info("Subscribe deleted for ID: {}", id);
 						res.status(204);
 						return "";
+					});
+				});
+				
+				path("/cancel", ()-> {
+					// 해지자목록 조회  
+					get("", (req, res) -> {
+						int code = 999;
+						String msg = "";
+						JSONObject responseJSON = new JSONObject();
+						List <Subscribe> data = service.getCancelList();
+						if (data != null && data.size() > 0) {
+							logger.info("All Cancel Data retrieved: count {}", data.size());
+							res.status(200);
+							
+							code = 200;
+							msg = "정상 처리";
+							JSONArray arry = new JSONArray();
+							for (Subscribe s: data)
+								arry.add(s);
+							
+							responseJSON.put("data", arry);
+							
+						} else {
+							logger.warn("No Cancel Data");
+							res.status(404);
+							return "Data not found";
+						}
+						// 문제가 없다면 정상코드 제공
+						responseJSON.put("code", code);
+						responseJSON.put("msg", msg);
+
+						return responseJSON.toJSONString();
+					});
+					
+					// 해지요청 처리
+					post("", (req, res) -> {
+						int code = 999;
+						String msg = "";
+						JSONObject responseJSON = new JSONObject();
+
+						JSONObject jsonObject = (JSONObject) JSONValue.parse(req.body());
+						logger.info(jsonObject.toJSONString());
+						JSONObject dtocon = new JSONObject();
+						dtocon.put("spcode", jsonObject.getAsString("carrier"));
+						dtocon.put("mobileno", jsonObject.getAsString("phone"));
+						
+						Subscribe data = JSONValue.parse(dtocon.toJSONString(), Subscribe.class);
+						
+						List<Subscribe> targets = service.getSubscribeByMobileno(data);
+						if (targets != null && targets.size()>0) {
+							int dcnt = 0;
+							for (Subscribe d: targets) {
+								service.deleteSubscribe(d.getId());
+								dcnt++;
+								logger.info("[{}] Cancel Service - ID:{}", dcnt, d.getId());
+							}
+							res.status(200);
+							
+							code = 200;
+							msg = "정상 처리";
+							
+						} else {
+							code = 400;
+							msg = "가입정보를 찾을 수 없습니다.";
+						}
+						// 문제가 없다면 정상코드 제공
+						responseJSON.put("code", code);
+						responseJSON.put("msg", msg);
+
+						return responseJSON.toJSONString();
 					});
 				});
 			});

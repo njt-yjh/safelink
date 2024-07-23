@@ -22,6 +22,10 @@
         SELECT * FROM subscribe
     </select>
     
+   <select id="getCancelList" resultMap="ResultMap">
+        SELECT * FROM subscribe where status='D'
+    </select>
+    
     <select id="getSubscribeById" resultMap="ResultMap">
         SELECT * FROM subscribe WHERE id=#{id}
     </select>
@@ -45,9 +49,12 @@
         WHERE id=#{id}
     </update>
 
+	<!-- 본인이 직접 해지요청  -->
     <delete id="deleteSubscribe">
         UPDATE subscribe
-        SET status='D'
+        SET status='D',
+        	cancelcode='A0',
+        	cancelreason='본인이 직접 홈페이지에서 해지'
         WHERE id=#{id}
     </delete>
 </mapper>

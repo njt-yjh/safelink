@@ -21,6 +21,8 @@ public class MyBatisConfig {
 
             String encryptedPassword = properties.getProperty("db.password.encrypted");
             String aesKey = properties.getProperty("aes.key");
+            AES256Util.setKey(aesKey);
+            
             String decryptedPassword = AES256Util.decrypt(encryptedPassword, aesKey);
 
             String dbUrlKey = "db.url." + env;

@@ -18,5 +18,7 @@
     <mappers>
         <mapper resource="mapper/DataMapper.xml"/>
         <mapper resource="mapper/SubscribeMapper.xml"/>
+        <mapper resource="mapper/LoginMapper.xml"/>
+
     </mappers>
 </configuration>

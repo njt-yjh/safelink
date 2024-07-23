@@ -6,10 +6,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.dsqd.amc.linkedmo.config.MyBatisConfig;
 import com.dsqd.amc.linkedmo.controller.DataController;
+import com.dsqd.amc.linkedmo.controller.LoginController;
+import com.dsqd.amc.linkedmo.controller.SchedulerController;
 import com.dsqd.amc.linkedmo.controller.SubscribeController;
 import com.dsqd.amc.linkedmo.util.AES256Util;
+import com.dsqd.amc.linkedmo.util.ApiExcludeList;
+import com.dsqd.amc.linkedmo.util.JwtUtil;
+import com.dsqd.amc.linkedmo.util.SchedulerModule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +50,49 @@ public class RestServer {
 		
 		int port = 5000;
 		port(port);
+		
+		before((request, response) -> {
+            String path = request.pathInfo();
+            String clientIP = request.ip();
+            logger.info("ip:{} - path:{}", clientIP, path);
+            
+            if ("127.0.0.1".equals(clientIP) || "0:0:0:0:0:0:0:1".equals(clientIP) || ApiExcludeList.isExcluded(path)) {
+                return; // 특정 API와 파일확장자는 JWT 검증을 제외
+            }
+
+            String token = request.headers("Authorization");
+            if (token == null || token.isEmpty()) {
+                //response.redirect("/login.html");
+                //halt();
+                halt(401, "You are not authorized");
+            }
+            
+            // TEST용 *********************************** 
+            System.out.println(token);
+            if (token.equals("Bearer admin")) return;
+            // *****************************************
+            
+            try {
+                DecodedJWT decodedJWT = JwtUtil.verifyToken(token);
+                //String clientIP = request.ip();
+                String tokenClientIP = JwtUtil.getClientIP(decodedJWT);
+                String tokenUsername = JwtUtil.getUsername(decodedJWT);
+
+                if (!clientIP.equals(tokenClientIP)) {
+                    halt(401, "Token IP mismatch");
+                }
+
+                // Token is valid, generate new token
+                String newToken = JwtUtil.createToken(clientIP, tokenUsername);
+                response.header("Authorization", "Bearer " + newToken);
+            } catch (JWTVerificationException e) {
+                halt(401, "Token is not valid or IP mismatch");
+
+            } catch (Exception e) {
+                halt(401, "Unexpected situation");
+            }
+        });
+		
 		get("/hello", (req, res) -> "Hello World");
 		post("/hello/:USERID", (req, res) -> getUser(req, res));
 
@@ -60,6 +110,10 @@ public class RestServer {
 		//DataController.main(args);
 		new DataController();
 		new SubscribeController();
+		new LoginController();
+		new SchedulerController();
+		
+		SchedulerModule.startScheduler();
 		
 		// root is 'src/main/resources', so put files in 'src/main/resources/public'
 		// :DAPAID", (req, res) -> serviceSSO(req, res)

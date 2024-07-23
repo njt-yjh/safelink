@@ -13,6 +13,8 @@ public class Subscribe {
 	private String bFP;
 	private String status; 
 	
+	public Subscribe() {}
+	
 	//Getter & Setter
 	public int getId() {
 		return id;
@@ -69,5 +71,77 @@ public class Subscribe {
 		this.status = status;
 	}
 	
+	// Builder
+	public Subscribe(Builder builder) {
+		this.id = builder.id;
+		this.spcode = builder.spcode;
+		this.mobileno = builder.mobileno;
+		this.agree1 = builder.agree1;
+		this.agree2 = builder.agree2;
+		this.agree3 = builder.agree3;
+		this.bFP = builder.bFP;
+		this.status = builder.status;
+	}
 	
+    public static class Builder {
+    	private int id;
+    	private String spcode;
+    	private String mobileno;
+    	private boolean agree1;
+    	private boolean agree2;
+    	private boolean agree3;
+    	private String bFP;
+    	private String status; 
+
+        public Builder(String mobileno) { // 필수 매개변수 생성자
+        	this.mobileno = mobileno;
+        }
+
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
+        
+        public Builder spcode(String spcode) {
+            this.spcode = spcode;
+            return this;
+        }
+
+        public Builder mobileno(String mobileno) {
+            this.mobileno = mobileno;
+            return this;
+        }
+
+        public Builder agree1(boolean agree1) {
+            this.agree1 = agree1;
+            return this;
+        }
+        
+        public Builder agree2(boolean agree2) {
+            this.agree2 = agree2;
+            return this;
+        }
+        
+        public Builder agree3(boolean agree3) {
+            this.agree3 = agree3;
+            return this;
+        }
+        
+        public Builder bFP(String bFP) {
+            this.bFP = bFP;
+            return this;
+        }
+        
+        public Builder status(String status) {
+            this.status = status;
+            return this;
+        }
+
+        public Subscribe build() {
+            return new Subscribe(this);
+        }
+    }
+    
+    
+
 }

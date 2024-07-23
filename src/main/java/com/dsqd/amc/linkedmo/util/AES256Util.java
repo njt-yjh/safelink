@@ -8,6 +8,22 @@ public class AES256Util {
 
     private static final String ALGORITHM = "AES";
     private static final int KEY_SIZE = 32;
+    
+    private static String aesKey;
+
+    public static void setKey(String key) {
+    	aesKey = key;
+    }
+    
+    public static String encrypt(String plainText) throws Exception {
+    	if (aesKey == null) return "";
+    	return encrypt(plainText, aesKey);
+    }
+    
+    public static String decrypt(String encText) throws Exception {
+    	if (aesKey == null) return "";
+    	return decrypt(encText, aesKey);
+    }
 
     public static String encrypt(String value, String key) throws Exception {
         SecretKeySpec secretKey = new SecretKeySpec(padKey(key), ALGORITHM);

@@ -21,4 +21,6 @@ public interface SubscribeMapper {
     void updateSubscribe(Subscribe data);
 
     void deleteSubscribe(@Param("id") int id);
+    
+    List<Subscribe> getCancelList();
 }

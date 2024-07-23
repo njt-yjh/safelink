@@ -1,11 +1,8 @@
 package com.dsqd.amc.linkedmo.model;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Date;
+import org.apache.ibatis.annotations.*;
 
 import net.minidev.json.JSONObject;
 

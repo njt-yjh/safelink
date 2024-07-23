@@ -48,10 +48,17 @@ public class SubscribeService {
         }
     }
     
-    public List <Subscribe> getSubscribAll() {
+    public List <Subscribe> getSubscribeAll() {
         try (SqlSession session = sqlSessionFactory.openSession()) {
         	SubscribeMapper mapper = session.getMapper(SubscribeMapper.class);
             return mapper.getSubscribeAll();
+        }
+    }
+    
+    public List <Subscribe> getCancelList() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+        	SubscribeMapper mapper = session.getMapper(SubscribeMapper.class);
+            return mapper.getCancelList();
         }
     }
 
