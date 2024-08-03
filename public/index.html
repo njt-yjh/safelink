@@ -22,6 +22,9 @@
             max-width: 980px;
         }
     </style>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -286,7 +289,7 @@
             <div class="col-md-4">
 	            <h4>전화 상담</h4>
 	            <p>
-				전화번호 : 1588-0486 <br/>
+				전화번호 : 1533-5278  <br/>
 				평일 09:00 - 18:00 연중무휴 운영
 				</p>
 			</div>
@@ -376,7 +379,7 @@
     <!-- Agreement Modal -->
     <div class="modal fade" id="agreeModal" tabindex="-1" aria-labelledby="agreeModalLabel" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content">
+            <div class="modal-content ibm-plex-sans-kr-regular">
                 <div class="modal-header">
                     <h5 class="modal-title" id="agreeModalLabel"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -411,8 +414,17 @@
                               <input type="radio" class="btn-check" name="carrier" id="lgu2" value="LGU" autocomplete="off">
                               <label class="btn btn-outline-primary" for="lgu2">LGU</label>
                           </div>
-                          <input type="text" class="form-control" id="cancelPhone" placeholder="01012345678" required>
+			            <div class="row">
+			              <div class="col-8">
+			                <input type="text" class="form-control" id="cancelPhone" placeholder="01012345678" required />
+			              </div>
+			              <div class="col-4">
+			                <button type="button" class="btn btn-success" id="sendotp">인증번호받기</button>
+			              </div>
+			            </div>
+
                           <div class="invalid-feedback" id="phoneNumberFeedback2" style="display: none;">전화번호는 010으로 시작해야 합니다.</div>
+                          <input type="text" class="form-control" id="smsotp" placeholder="인증번호입력" required>
                       </div>
                       <div class="">
                          <div class="form-check" style="text-align: left;">
@@ -441,6 +453,6 @@
 <!-- Bootstrap Bundle with Popper and jQuery -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="script.js"></script>
+<script src="./script.js?ver=202408021532"></script>
 </body>
 </html>

@@ -63,7 +63,7 @@ public class JwtUtil {
     
     public static void main(String [] args) {
     	try {
-			String token = createServerToken("103.55.192.229", "amcinc", (60*60*24*30*6l));
+			String token = createServerToken("114.108.153.56", "amcinc", (60*60*24*30*6l));
 			System.out.println(token);
 			
 			DecodedJWT dtoken = verifyServerToken(token);
