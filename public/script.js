@@ -104,9 +104,9 @@ $(document).ready(function () {
         $.get(fileName, function (data) {
             var lines = data.split('\n');
             var title = lines[0];
-            var content = lines.slice(1).join('\n');
+            var content = lines.slice(1).join('<br/>');
             $('#agreeModalLabel').text(title);
-            $('#agreeModalBody').text(content);
+            $('#agreeModalBody').html(content);
             $('#agreeModal').modal('show');
         });
     }

@@ -44,9 +44,10 @@ public class RestServer {
 
         MyBatisConfig.init(env);
         
-        logger.info("Starting the REST server...");
+        logger.info("Starting the REST server... [" + env + "]");
 
-		staticFiles.externalLocation("/Users/eunjun/Documents/dsqf/AMCProject/public2"); // Static files
+//		staticFiles.externalLocation("/Users/eunjun/Documents/dsqf/AMCProject/public2"); // Static files
+		staticFiles.externalLocation("C:\\Users\\silve\\git\\safelink\\public"); // Static files
 		
 		int port = 5000;
 		port(port);
@@ -100,8 +101,8 @@ public class RestServer {
 		get("/exit", (req, res) -> exitTest() );
 		
 		try {
-			String encdata = AES256Util.encrypt("wession@1", "12345678901234567890123456789012");
-			System.out.println("AES : " + encdata);
+			String encdata = AES256Util.encrypt("safelinkd&07", "12345678901234567890123456789012");
+			//System.out.println("AES : " + encdata);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
