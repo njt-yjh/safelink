@@ -10,24 +10,6 @@ import java.util.regex.Pattern;
 public class ApiExcludeList {
     private static final List<Pattern> excludePaths = new ArrayList<>();
     private static final List<Pattern> excludeExtensions = new ArrayList<>();
-
-//    static {
-//        addPath("/api/v1.0/login");
-//        addPath("/api/v1.0/subscribe");
-//        addPath("/api/v1.0/cancel");
-//        
-//        addPath("/public/*");
-//        // 다른 제외할 API 경로를 여기에 추가
-//
-//        addExtension("css");
-//        addExtension("js");
-//        addExtension("png");
-//        addExtension("jpg");
-//        addExtension("gif");
-//        addExtension("jpeg");
-//        addExtension("svg");
-//        addExtension("html");
-//    }
     
     static {
         loadProperties();

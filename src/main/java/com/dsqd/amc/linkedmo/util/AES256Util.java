@@ -1,6 +1,6 @@
 package com.dsqd.amc.linkedmo.util;
 
-import javax.crypto.Cipher;
+import javax.crypto.Cipher; 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 

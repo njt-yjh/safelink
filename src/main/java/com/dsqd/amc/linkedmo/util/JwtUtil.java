@@ -13,7 +13,7 @@ public class JwtUtil {
     private static final Algorithm algorithm = Algorithm.HMAC256(SECRET);
     
     private static final String server_SECRET = "amc_maru_server_$%13*&";
-    private static final Algorithm server_algorithm = Algorithm.HMAC256(server_SECRET);
+    private static final Algorithm server_algorithm = Algorithm.HMAC256(server_SECRET); 
     
     public static String createToken(String clientIP, String username) throws Exception {
         String encryptedIP = AES256Util.encrypt(clientIP);

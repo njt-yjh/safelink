@@ -1,4 +1,4 @@
-package com.dsqd.amc.linkedmo.util;
+package com.dsqd.amc.linkedmo.util.gensrc;
 
 import java.util.Arrays;
 

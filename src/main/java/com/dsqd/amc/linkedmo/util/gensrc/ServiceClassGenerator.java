@@ -1,4 +1,4 @@
-package com.dsqd.amc.linkedmo.util;
+package com.dsqd.amc.linkedmo.util.gensrc;
 
 public class ServiceClassGenerator {
     private String className = "MyClass";
