@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dsqd.amc.linkedmo.mapper.BoardMapper">
+
+	<!-- 게시물 목록 -->
+	<select id="getAllBoards" resultType="com.dsqd.amc.linkedmo.model.Board">
+	    SELECT 
+	        id, title, content, author_id, author_name, created_at, updated_at
+	    FROM 
+	        board
+	    ORDER BY 
+	        created_at DESC
+	</select>
+
+    <!-- 게시물 조회 -->
+    <select id="getBoardById" parameterType="int" resultType="com.dsqd.amc.linkedmo.model.Board">
+        SELECT 
+            id, title, content, author_id, author_name, created_at, updated_at
+        FROM 
+            board
+        WHERE 
+            id = #{id}
+    </select>
+
+    <!-- 게시물 삽입 -->
+    <insert id="insertBoard" parameterType="com.dsqd.amc.linkedmo.model.Board">
+        INSERT INTO board (title, content, author_id, author_name)
+        VALUES (#{title}, #{content}, #{authorId}, #{authorName})
+    </insert>
+
+    <!-- 게시물 수정 -->
+    <update id="updateBoard" parameterType="com.dsqd.amc.linkedmo.model.Board">
+        UPDATE board
+        SET 
+            title = #{title},
+            content = #{content},
+            updated_at = #{updatedAt}
+        WHERE 
+            id = #{id} 
+            AND author_id = #{authorId}
+    </update>
+
+    <!-- 게시물 삭제 -->
+    <delete id="deleteBoard" parameterType="int">
+        DELETE FROM board
+        WHERE 
+            id = #{id}
+    </delete>
+
+    <!-- 첨부파일 삽입 -->
+    <insert id="insertAttachment" parameterType="com.dsqd.amc.linkedmo.model.Attachment">
+        INSERT INTO attachment (board_id, file_name, file_path, created_at)
+        VALUES (#{boardId}, #{fileName}, #{filePath}, #{createdAt})
+    </insert>
+
+    <!-- 첨부파일 조회 -->
+    <select id="getAttachmentsByBoardId" parameterType="int" resultType="com.dsqd.amc.linkedmo.model.Attachment">
+        SELECT 
+            id, board_id, file_name, file_path, created_at
+        FROM 
+            attachment
+        WHERE 
+            board_id = #{boardId}
+    </select>
+
+    <!-- 댓글 삽입 -->
+    <insert id="insertComment" parameterType="com.dsqd.amc.linkedmo.model.Comment">
+        INSERT INTO comment (board_id, content, author_id, author_name, created_at)
+        VALUES (#{boardId}, #{content}, #{authorId}, #{authorName}, #{createdAt})
+    </insert>
+
+    <!-- 댓글 조회 -->
+    <select id="getCommentsByBoardId" parameterType="int" resultType="com.dsqd.amc.linkedmo.model.Comment">
+        SELECT 
+            id, board_id, content, author_id, author_name, created_at
+        FROM 
+            comment
+        WHERE 
+            board_id = #{boardId}
+        ORDER BY created_at ASC
+    </select>
+
+    <!-- 답글 삽입 -->
+    <insert id="insertReply" parameterType="com.dsqd.amc.linkedmo.model.Reply">
+        INSERT INTO reply (comment_id, content, author_id, author_name, created_at)
+        VALUES (#{commentId}, #{content}, #{authorId}, #{authorName}, #{createdAt})
+    </insert>
+
+    <!-- 답글 조회 -->
+    <select id="getRepliesByCommentId" parameterType="int" resultType="com.dsqd.amc.linkedmo.model.Reply">
+        SELECT 
+            id, comment_id, content, author_id, author_name, created_at
+        FROM 
+            reply
+        WHERE 
+            comment_id = #{commentId}
+        ORDER BY created_at ASC
+    </select>
+
+</mapper>

@@ -15,6 +15,7 @@
         <result column="created_at" property="createDate" />
         <result column="bFP" property="bFP" />
         <result column="status" property="status" />
+        <result column="offercode" property="offercode" />
 
     </resultMap>
 
@@ -23,7 +24,7 @@
     </select>
     
    <select id="getCancelList" resultMap="ResultMap">
-        SELECT * FROM subscribe where status='D'
+        SELECT * FROM subscribe where status='D' or status='P'
     </select>
     
     <select id="getSubscribeById" resultMap="ResultMap">
@@ -33,10 +34,14 @@
     <select id="getSubscribeByMobileno" resultMap="ResultMap">
         SELECT * FROM subscribe WHERE mobileno=#{mobileno} and status='A'
     </select>
+    
+    <select id="getTodaySubscribeByMobileno" resultMap="ResultMap">
+        SELECT * FROM subscribe WHERE mobileno=#{mobileno} and DATE(created_at)=CURDATE()
+    </select>
 
     <insert id="insertSubscribe">
-        INSERT INTO subscribe (spcode, mobileno, agree1, agree2, agree3)
-        VALUES (#{spcode}, #{mobileno}, #{agree1}, #{agree2}, #{agree3})
+        INSERT INTO subscribe (spcode, mobileno, agree1, agree2, agree3, offercode)
+        VALUES (#{spcode}, #{mobileno}, #{agree1}, #{agree2}, #{agree3}, #{offercode})
     </insert>
 
     <update id="updateSubscribe">
@@ -45,7 +50,8 @@
             mobileno=#{mobileno},
             agree1=#{agree1},
             agree2=#{agree2},
-            agree3=#{agree3}
+            agree3=#{agree3},
+            updated_at=NOW()
         WHERE id=#{id}
     </update>
 
@@ -53,6 +59,7 @@
     <delete id="deleteSubscribe">
         UPDATE subscribe
         SET status='D',
+       		canceled_at=NOW(), 
         	cancelcode='A0',
         	cancelreason='본인이 직접 홈페이지에서 해지'
         WHERE id=#{id}

@@ -18,14 +18,15 @@ public class MyBatisConfig {
         try {
             Properties properties = new Properties();
             properties.load(Resources.getResourceAsStream("application.properties"));
-
+            System.out.println("environment: " + properties.getProperty("mybatis.environment"));
+            
             String encryptedPassword = properties.getProperty("db.password.encrypted");
             String aesKey = properties.getProperty("aes.key");
             AES256Util.setKey(aesKey);
             
             String decryptedPassword = AES256Util.decrypt(encryptedPassword, aesKey);
 
-            String dbUrlKey = "db.url." + env;
+            String dbUrlKey = "db.url";
             String dbUrl = properties.getProperty(dbUrlKey);
             if (dbUrl == null) {
                 throw new RuntimeException("Database URL not found for environment: " + env);
@@ -39,7 +40,10 @@ public class MyBatisConfig {
 
             Reader reader = Resources.getResourceAsReader(properties.getProperty("mybatis.config-location"));
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-            sqlSessionFactory.getConfiguration().setEnvironment(new org.apache.ibatis.mapping.Environment("development", new org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory(), dataSource));
+            sqlSessionFactory.getConfiguration().setEnvironment(
+            		new org.apache.ibatis.mapping.Environment(properties.getProperty("mybatis.environment"), 
+            				new org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory(), dataSource)
+            		);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {

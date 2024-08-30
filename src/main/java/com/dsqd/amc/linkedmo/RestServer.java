@@ -9,12 +9,14 @@ import java.util.Map;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.dsqd.amc.linkedmo.config.MyBatisConfig;
+import com.dsqd.amc.linkedmo.controller.BoardController;
 import com.dsqd.amc.linkedmo.controller.DataController;
 import com.dsqd.amc.linkedmo.controller.LoginController;
 import com.dsqd.amc.linkedmo.controller.SchedulerController;
 import com.dsqd.amc.linkedmo.controller.SubscribeController;
 import com.dsqd.amc.linkedmo.util.AES256Util;
 import com.dsqd.amc.linkedmo.util.ApiExcludeList;
+import com.dsqd.amc.linkedmo.util.InterfaceManager;
 import com.dsqd.amc.linkedmo.util.JwtUtil;
 import com.dsqd.amc.linkedmo.util.SchedulerModule;
 
@@ -45,9 +47,13 @@ public class RestServer {
         MyBatisConfig.init(env);
         
         logger.info("Starting the REST server... [" + env + "]");
+        
+        // REST Client
+//        InterfaceManager itfMgr = InterfaceManager.getInstance();
+        //itfMgr.startHealthCheckThread();
 
 //		staticFiles.externalLocation("/Users/eunjun/Documents/dsqf/AMCProject/public2"); // Static files
-		staticFiles.externalLocation("C:\\Users\\silve\\git\\safelink\\public"); // Static files
+		staticFiles.externalLocation("C:\\Users\\silve\\git\\safelink\\public2"); // Static files
 		
 		int port = 5000;
 		port(port);
@@ -113,6 +119,8 @@ public class RestServer {
 		new SubscribeController();
 		new LoginController();
 		new SchedulerController();
+		new BoardController();
+
 		
 		SchedulerModule.startScheduler();
 		

@@ -14,6 +14,8 @@ public interface SubscribeMapper {
 	
 	List<Subscribe> getSubscribeByMobileno(Subscribe data);
 	
+	List<Subscribe> getTodaySubscribeByMobileno(Subscribe data);
+	
 	List<Subscribe> getSubscribeAll();
 
     void insertSubscribe(Subscribe data);

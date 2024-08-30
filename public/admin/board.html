@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시물 상세보기</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 id="boardTitle" class="my-4"></h1>
+        <div id="boardContent" class="mb-4"></div>
+        <div>
+            <button id="editBoard" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editBoardModal">수정</button>
+            <button id="deleteBoard" class="btn btn-danger">삭제</button>
+        </div>
+        <hr>
+        <h2>댓글</h2>
+        <div id="comments" class="mb-4"></div>
+        <div class="mb-4">
+            <textarea id="commentContent" class="form-control" placeholder="댓글을 입력하세요"></textarea>
+            <button id="submitComment" class="btn btn-primary mt-2">댓글 작성</button>
+        </div>
+        <hr>
+        <h2>답글</h2>
+        <div id="replies" class="mb-4"></div>
+        <div class="mb-4">
+            <textarea id="replyContent" class="form-control" placeholder="답글을 입력하세요"></textarea>
+            <button id="submitReply" class="btn btn-primary mt-2">답글 작성</button>
+        </div>
+        <hr>
+        <h2>파일 첨부</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="fileUpload" class="form-control mb-2">
+            <button type="submit" class="btn btn-primary">파일 업로드</button>
+        </form>
+        <div id="attachments" class="mt-4"></div>
+    </div>
+
+    <!-- 게시물 수정 모달 -->
+    <div class="modal fade" id="editBoardModal" tabindex="-1" aria-labelledby="editBoardModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="editBoardForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editBoardModalLabel">게시물 수정</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="editBoardTitle" class="form-label">제목</label>
+                            <input type="text" class="form-control" id="editBoardTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBoardContent" class="form-label">내용</label>
+                            <textarea class="form-control" id="editBoardContent" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBoardFile" class="form-label">첨부파일</label>
+                            <input type="file" class="form-control" id="editBoardFile">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">저장</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<!-- Bootstrap Bundle with Popper and jQuery -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            const boardId = new URLSearchParams(window.location.search).get('id');
+
+            function loadBoard() {
+                $.get(`/api/v1.0/boards/${boardId}`, function(data) {
+                    $('#boardTitle').text(data.title);
+                    $('#boardContent').html(data.content);
+                });
+            }
+
+            function loadComments() {
+                $.get(`/api/v1.0/boards/${boardId}/comments`, function(data) {
+                    let commentsHtml = '';
+                    data.forEach(function(comment) {
+                        commentsHtml += `
+                            <div class="comment">
+                                <strong>${comment.userId}:</strong> ${comment.content}
+                                <button class="btn btn-sm btn-danger deleteComment" data-id="${comment.id}">삭제</button>
+                            </div>
+                        `;
+                    });
+                    $('#comments').html(commentsHtml);
+                });
+            }
+
+            function loadReplies() {
+                $.get(`/api/v1.0/boards/${boardId}/replies`, function(data) {
+                    let repliesHtml = '';
+                    data.forEach(function(reply) {
+                        repliesHtml += `
+                            <div class="reply">
+                                <strong>${reply.userId}:</strong> ${reply.content}
+                                <button class="btn btn-sm btn-danger deleteReply" data-id="${reply.id}">삭제</button>
+                            </div>
+                        `;
+                    });
+                    $('#replies').html(repliesHtml);
+                });
+            }
+
+            loadBoard();
+            loadComments();
+            loadReplies();
+
+            $('#submitComment').click(function() {
+                const commentContent = $('#commentContent').val();
+                if (commentContent.trim() !== '') {
+                    $.post(`/api/v1.0/boards/${boardId}/comments`, { content: commentContent }, function() {
+                        loadComments();
+                        $('#commentContent').val('');
+                    });
+                }
+            });
+
+            $('#submitReply').click(function() {
+                const replyContent = $('#replyContent').val();
+                if (replyContent.trim() !== '') {
+                    $.post(`/api/v1.0/boards/${boardId}/replies`, { content: replyContent }, function() {
+                        loadReplies();
+                        $('#replyContent').val('');
+                    });
+                }
+            });
+
+            $('#uploadForm').submit(function(e) {
+                e.preventDefault();
+                const formData = new FormData();
+                formData.append('file', $('#fileUpload')[0].files[0]);
+
+                $.ajax({
+                    url: `/api/v1.0/boards/${boardId}/attachments`,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function() {
+                        alert("파일이 업로드되었습니다.");
+                    }
+                });
+            });
+
+            $(document).on('click', '.deleteComment', function() {
+                const commentId = $(this).data('id');
+                if (confirm("댓글을 삭제하시겠습니까?")) {
+                    $.ajax({
+                        url: `/api/v1.0/boards/${boardId}/comments/${commentId}`,
+                        type: 'DELETE',
+                        success: function() {
+                            loadComments();
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click', '.deleteReply', function() {
+                const replyId = $(this).data('id');
+                if (confirm("답글을 삭제하시겠습니까?")) {
+                    $.ajax({
+                        url: `/api/v1.0/boards/${boardId}/replies/${replyId}`,
+                        type: 'DELETE',
+                        success: function() {
+                            loadReplies();
+                        }
+                    });
+                }
+            });
+
+            $('#editBoard').click(function() {
+                $.get(`/api/v1.0/boards/${boardId}`, function(data) {
+                    $('#editBoardTitle').val(data.title);
+                    $('#editBoardContent').val(data.content);
+                });
+
+                $('#editBoardForm').submit(function(event) {
+                    event.preventDefault();
+                    const formData = new FormData();
+                    formData.append('title', $('#editBoardTitle').val());
+                    formData.append('content', $('#editBoardContent').val());
+                    if ($('#editBoardFile')[0].files[0]) {
+                        formData.append('file', $('#editBoardFile')[0].files[0]);
+                    }
+                    $.ajax({
+                        url: `/api/v1.0/boards/${boardId}`,
+                        type: 'PUT',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function() {
+                            $('#editBoardModal').modal('hide');
+                            loadBoard();
+                        }
+                    });
+                });
+            });
+
+            $('#deleteBoard').click(function() {
+                if (confirm("게시물을 삭제하시겠습니까?")) {
+                    $.ajax({
+                        url: `/api/v1.0/boards/${boardId}`,
+                        type: 'DELETE',
+                        success: function() {
+                            window.location.href = "index.html";
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

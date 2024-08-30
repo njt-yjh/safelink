@@ -57,6 +57,7 @@ $(document).ready(function () {
 		var formData = {
             spcode: $('input[name="telco"]:checked').val(),
             mobileno: $('#phoneNumber').val(),
+			offercode: $('#offercode').val(),
             agree1: $('#agree1').is(':checked'),
             agree2: $('#agree2').is(':checked'),
             agree3: $('#agree3').is(':checked')

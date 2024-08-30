@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>휴대폰약속번호 해지하기</title>
+    
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+</head>
+<body>
+    <div id="service_join_wrap">
+        <h3 class="service_join_tit">서비스 해지하기</h3>
+		<form name="cancelForm" id="cancelForm">
+		<input type="hidden" name="mobileno" id="mobileno" value="" />
+		<input type="hidden" name="spcode" id="spcode" value=""/>
+		<input type="hidden" name="offercode" id="offercode" value="00"/>
+		
+        <div class="phone_info">
+            <strong>가입하였던 전화번호 입력</strong>
+            <ul>
+                <li><button class="service_j_btn" id="SKT">SKT</button></li>
+                <li><button class="service_j_btn" id="KT">KT</button></li>
+                <li><button class="service_j_btn" id="LGU">LGU+</button></li>
+            </ul>
+
+            <div class="number">
+                <input type="text" id="phoneNumber" placeholder="전화번호를 입력하세요.">
+                <!--  <button type="button" class="btn btn-success" id="sendotp">인증번호받기</button>  -->
+            </div>
+        </div>
+
+        <div class="agree_wrap02">
+            <p class="agree_txt"><input type="checkbox" name="cancelAgree" id="cancelAgree">
+            <span>
+            아래 내역을 확인하였고, 이에 서비스 해지신청을 합니다. <br/>
+            해지 후 취소는 불가하며, 재가입은 가능합니다(단, 해지당일 재가입 불가). <br/>
+            </span></p>
+        </div>
+		</form>
+        <a href="#" class="cancel_btn">해지 신청</a>
+    </div>
+
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript" src="js/popup_cancel.js?20240830"></script>
+</html>

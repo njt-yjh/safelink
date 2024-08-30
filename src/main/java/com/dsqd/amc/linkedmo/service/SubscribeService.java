@@ -48,6 +48,13 @@ public class SubscribeService {
         }
     }
     
+    public List <Subscribe> getTodaySubscribeByMobileno(Subscribe data) {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+        	SubscribeMapper mapper = session.getMapper(SubscribeMapper.class);
+            return mapper.getTodaySubscribeByMobileno(data);
+        }
+    }
+    
     public List <Subscribe> getSubscribeAll() {
         try (SqlSession session = sqlSessionFactory.openSession()) {
         	SubscribeMapper mapper = session.getMapper(SubscribeMapper.class);
