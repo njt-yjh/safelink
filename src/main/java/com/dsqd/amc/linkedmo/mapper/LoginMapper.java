@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Param;
 public interface LoginMapper {
 
     Manager login(Manager data);
+    
+    Manager write(Manager data);
 
     void insertManager(Manager data);
 

@@ -10,6 +10,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.ibatis.io.Resources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.dsqd.amc.linkedmo.controller.LoginController;
 
 /**
  * 인터페이스 관리자 클래스. 서버의 헬스체크, 부하 분산, 재시도 등을 관리한다.
@@ -17,6 +21,7 @@ import org.apache.ibatis.io.Resources;
 public class InterfaceManager {
 
     private static final InterfaceManager instance = new InterfaceManager();
+    private final Logger logger = LoggerFactory.getLogger(InterfaceManager.class);
 
     private final List<String> initialServerList = new CopyOnWriteArrayList<>();
     private final List<String> activeServerList = new CopyOnWriteArrayList<>();
@@ -30,6 +35,17 @@ public class InterfaceManager {
     
     private boolean checkTCP;
     private boolean checkHEAD;
+    
+    private String naruBToken;
+    private String testMobileno = "01062235635";
+    
+    public void setTestMobileno(String mno) {
+    	this.testMobileno = mno;
+    }
+    
+    public String getTestMobileno() {
+    	return this.testMobileno;
+    }
 
     private InterfaceManager() {
         loadConfiguration();
@@ -62,8 +78,10 @@ public class InterfaceManager {
             properties.load(Resources.getResourceAsStream("application.properties"));
             checkTCP = "1".equals(properties.getProperty("checkTCP"))?true:false;
             checkHEAD = "1".equals(properties.getProperty("checkHEAD"))?true:false;
-            System.out.println("checkTCP: " + checkTCP);
-            System.out.println("checkHEAD: " + checkHEAD);
+            naruBToken = properties.getProperty("naru.jwt");
+            
+            logger.info("checkTCP:[{}] / checkHEAD:[{}]", checkTCP, checkHEAD);
+            logger.info("NARU JWT : {}", naruBToken);
             
             String servers = properties.getProperty("initialServers");
             if (servers != null && !servers.isEmpty()) {
@@ -72,9 +90,10 @@ public class InterfaceManager {
                     activeServerList.add(server.trim());
                 }
             }
+            logger.info("REST SERVER LIST : {}", servers);
             maxLoadThreshold = Integer.parseInt(properties.getProperty("maxLoadThreshold", "5"));
         } catch (IOException e) {
-            System.err.println("설정 파일을 읽는 중 오류 발생: " + e.getMessage());
+        	logger.error("설정 파일을 읽는 중 오류 발생: " + e.getMessage());
         }
     }
 
@@ -141,6 +160,10 @@ public class InterfaceManager {
 
     public int getMaxLoadThreshold() {
         return maxLoadThreshold;
+    }
+    
+    public String getNaruJWT() {
+        return this.naruBToken;
     }
 
     /**

@@ -2,7 +2,20 @@ package com.dsqd.amc.linkedmo.model;
 
 import java.util.Date;
 
-import com.dsqd.amc.linkedmo.model.Manager.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import net.minidev.json.JSONObject;
+
+@ToString
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class Batch {
 	private int txid;
@@ -11,87 +24,15 @@ public class Batch {
 	private Date ended;
 	private String code;
 	private String result;
-	
-	public Batch() {}
-	
-	// Getter & Setter
-    public int getTxid() {
-		return txid;
-	}
-	public void setTxid(int txid) {
-		this.txid = txid;
-	}
-	public String getBatchid() {
-		return batchid;
-	}
-	public void setBatchid(String batchid) {
-		this.batchid = batchid;
-	}
-	public Date getStarted() {
-		return started;
-	}
-	public void setStarted(Date started) {
-		this.started = started;
-	}
-	public Date getEnded() {
-		return ended;
-	}
-	public void setEnded(Date ended) {
-		this.ended = ended;
-	}
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
-	public String getResult() {
-		return result;
-	}
-	public void setResult(String result) {
-		this.result = result;
-	}
-	
-	//Builder 
-	public Batch(Builder builder) {
-		this.batchid = builder.batchid;
-		this.started = builder.started;
-		this.ended = builder.ended;
-		this.code = builder.code;
-		this.result = builder.result;
-	}
-	
 
-
-	public static class Builder {
-		private String batchid;
-		private Date started;
-		private Date ended;
-		private String code;
-		private String result;
-
-        public Builder(String batchid) { // 필수 매개변수 생성자
-        	this.batchid = batchid;
-        }
-
-        public Builder code(String code) {
-            this.code = code;
-            return this;
-        }
-        
-        public Builder result(String result) {
-            this.result = result;
-            return this;
-        }
-        
-        public Builder started(Date started) {
-            this.started = started;
-            return this;
-        }
-        
-        public Builder ended(Date ended) {
-            this.ended = ended;
-            return this;
-        }
-	}
+    public String toJSONString() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("txid", txid);
+        jsonObject.put("batchid", batchid);
+        jsonObject.put("started", started);
+        jsonObject.put("ended", ended);
+        jsonObject.put("code", code);
+        jsonObject.put("result", result);
+        return jsonObject.toJSONString();
+    }
 }

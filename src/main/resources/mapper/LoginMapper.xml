@@ -12,15 +12,30 @@
     
     <resultMap id="LoginMap" type="com.dsqd.amc.linkedmo.model.Manager">
         <id column="username" property="username" />
+        <result column="korname" property="korname" />
+        <result column="lastlogined" property="lastlogined" />
+        <result column="lastloginip" property="lastloginip" />
+        <result column="failcount" property="failcount" />
     </resultMap>
 
     <select id="login" resultMap="LoginMap">
-        SELECT username FROM managers where username=#{username} and password=#{password}
+        SELECT username, korname FROM managers where username=#{username} and password=#{password}
+    </select>
+
+    <select id="write" resultMap="LoginMap">
+        UPDATE managers
+        	SET lastlogined=NOW(),
+        		lastloginip=#{lastloginip},
+        		failcount = CASE 
+        					WHEN #{korname} IS NULL THEN failcount + 1 
+        					ELSE #{failcount} 
+        					END
+        WHERE username=#{username}
     </select>
 
     <insert id="insertManager">
-        INSERT INTO managers (username, password)
-        VALUES (#{loginid}, #{password})
+        INSERT INTO managers (username, password, korname)
+        VALUES (#{loginid}, #{password}, #{korname})
     </insert>
 
     <update id="changePassword">

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dsqd.amc.linkedmo.mapper.BatchlogMapper">
+
+    <resultMap id="ResultMap" type="com.dsqd.amc.linkedmo.model.Batchlog">
+        <id column="txid" property="txid" />
+        <result column="batchid" property="batchid" />
+        <result column="started" property="started" />
+        <result column="ended" property="ended" />
+        <result column="code" property="code" />
+        <result column="result" property="result" />
+    </resultMap>
+<!-- 
+	Batchlog getBatchlog(@Param("id") int id);
+	List<Batchlog> getBatchlogByBatchTxid(@Param("batch_txid") int batch_txid);
+	List<Batchlog> getBatchlogAll();
+    void insertBatchlog(Batchlog data);
+    void updateBatchlog(Batchlog data);
+    void deleteBatchlog(@Param("id") int id);
+ -->
+    <select id="getBatchlog" resultMap="ResultMap">
+        SELECT * FROM batchlogs WHERE id=#{id}
+    </select>
+    
+    <select id="getBatchlogByBatchTxid" resultMap="ResultMap">
+        SELECT * FROM batchlogs WHERE batch_txid=#{batch_txid}
+    </select>
+
+    <select id="getBatchlogAll" resultMap="ResultMap">
+        SELECT * FROM batchlogs 
+    </select>
+
+    <insert id="insertBatchlog">
+        INSERT INTO batchlogs (batch_txid, type, logdata, actcode, created_at)
+        VALUES (#{batch_txid}, #{type}, #{logdata}, #{actcode}, NOW())
+    </insert>
+
+    <update id="updateBatchlog">
+        UPDATE batchlogs
+        SET actcode=#{actcode},
+            comment=#{comment},
+            updated=NOW()
+        WHERE txid=#{txid}
+    </update>
+
+    <delete id="deleteBatchlog"  parameterType="int">
+        DELETE batchlogs WHERE id=#{id}
+    </delete>
+</mapper>

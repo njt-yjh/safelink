@@ -56,7 +56,7 @@ public class ApiExcludeList {
 
     public static boolean isExcluded(String path) {
         for (Pattern pattern : excludePaths) {
-            if (pattern.matcher(path).matches()) {
+            if (pattern.matcher(path).find()) {
                 return true;
             }
         }

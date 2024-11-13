@@ -3,6 +3,7 @@ package com.dsqd.amc.linkedmo.controller;
 import com.dsqd.amc.linkedmo.model.Manager;
 import com.dsqd.amc.linkedmo.model.Subscribe;
 import com.dsqd.amc.linkedmo.service.LoginService;
+import com.dsqd.amc.linkedmo.util.JwtUtil;
 
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
@@ -25,29 +26,42 @@ public class LoginController {
 	private void setupEndpoints() {
 		path("/api", () -> {
 			path("/v1.0", () -> {
-				path("/login", () -> {
+				path("/admin/login", () -> {
 
 					// login
 					post("", (req, res) -> {
 						int code = 999;
 						String msg = "";
+						String token = "";
 						JSONObject responseJSON = new JSONObject();
 
 						Manager data = JSONValue.parse(req.body(), Manager.class);
 						Manager logined = loginService.login(data);
-						logger.info("Login try : {} => {}", data, logined);
+						logger.info("Login try [IP:{}]: {} => {}", req.ip(), data.toJSONString(), logined);
+						
 						res.status(200);
 						
 						if (logined !=null && data.getUsername().equals(logined.getUsername())) {
+							logined.setLastloginip(req.ip());
+							logined.setFailcount(0);
 							code = 200;
 							msg = "LOGIN SUCCESS";
+							token = JwtUtil.createToken(logined.getLastloginip(), logined.getUsername(),logined.getKorname() );
+							token = "Bearer " + token;
+							logger.info("LOGIN SUCCESS : {}", logined);
 						} else {
+							logined = new Manager();
+							logined.setUsername(data.getUsername());
+							logined.setLastloginip(req.ip());
 							code = 402;
 							msg = "NOT MATCHED LOGIN ID and PASSWORD";
+							logger.info("LOGIN FAIL : {}", logined);
 						}
+						loginService.write(logined);
 						// 문제가 없다면 정상코드 제공
 						responseJSON.put("code", code);
 						responseJSON.put("msg", msg);
+						res.header("Authorization", token);
 
 						return responseJSON.toJSONString();
 					});

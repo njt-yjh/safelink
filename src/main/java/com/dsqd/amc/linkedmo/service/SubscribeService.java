@@ -1,7 +1,6 @@
 package com.dsqd.amc.linkedmo.service;
 
 import com.dsqd.amc.linkedmo.mapper.SubscribeMapper;
-import com.dsqd.amc.linkedmo.model.Data;
 import com.dsqd.amc.linkedmo.model.Subscribe;
 
 import java.util.List;
@@ -62,6 +61,13 @@ public class SubscribeService {
         }
     }
     
+    public List <Subscribe> getSubscribeAllActive() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+        	SubscribeMapper mapper = session.getMapper(SubscribeMapper.class);
+            return mapper.getSubscribeAllActive();
+        }
+    }
+    
     public List <Subscribe> getCancelList() {
         try (SqlSession session = sqlSessionFactory.openSession()) {
         	SubscribeMapper mapper = session.getMapper(SubscribeMapper.class);
@@ -73,6 +79,14 @@ public class SubscribeService {
         try (SqlSession session = sqlSessionFactory.openSession()) {
         	SubscribeMapper mapper = session.getMapper(SubscribeMapper.class);
             mapper.deleteSubscribe(id);
+            session.commit();
+        }
+    }
+    
+    public void deleteSubscribeT0(int id) {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+        	SubscribeMapper mapper = session.getMapper(SubscribeMapper.class);
+            mapper.deleteSubscribeT0(id);
             session.commit();
         }
     }

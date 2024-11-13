@@ -17,7 +17,7 @@ public class SchedulerModule {
     private static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     private static ScheduledFuture<?> scheduledFuture;
 
-    public static void startScheduler() {
+    public static void startScheduler() { 
         try {
             // Load properties
             Properties properties = new Properties();
@@ -97,13 +97,7 @@ public class SchedulerModule {
     }
 
     public static void work(Map<String, Object> params, int triggerId) {
-        try {
-            logger.info("Work started with params: {}, triggered by: {}", params, triggerId);
-            // Simulate long running task
-            Thread.sleep(5000);
-            logger.info("Work finished.");
-        } catch (InterruptedException e) {
-            logger.error("Work interrupted.", e);
-        }
+    	Task task = new Batch01();
+    	task.executeTask(params, triggerId); 
     }
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dsqd.amc.linkedmo.mapper.BatchMapper">
+
+    <resultMap id="ResultMap" type="com.dsqd.amc.linkedmo.model.Batch">
+        <id column="txid" property="txid" />
+        <result column="batchid" property="batchid" />
+        <result column="started" property="started" />
+        <result column="ended" property="ended" />
+        <result column="code" property="code" />
+        <result column="result" property="result" />
+    </resultMap>
+<!-- 
+	Batch getBatch(@Param("txid") int txid);
+	List<Batch> getBatchByBatchid(String batchid);
+	List<Batch> getBatchToday();
+	List<Batch> getBatchTodayByBatchid(String batchid);
+	List<Batch> getBatchAll();
+    void insertBatch(Batch data);
+    void updateBatch(Batch data);
+    void deleteBatch(@Param("txid") int txid);
+ -->
+    <select id="getBatch" resultMap="ResultMap">
+        SELECT * FROM batchs WHERE txid=#{txid}
+    </select>
+    
+    <select id="getBatchByBatchid" resultMap="ResultMap">
+        SELECT * FROM batchs WHERE batchid=#{batchid}
+    </select>
+    
+   <select id="getBatchToday" resultMap="ResultMap">
+        SELECT * FROM batchs WHERE DATE(started) = CURDATE()
+    </select>
+    
+    <select id="getBatchTodayByBatchid" resultMap="ResultMap">
+        SELECT * FROM batchs WHERE DATE(started) = CURDATE() AND batchid=#{batchid}
+    </select>
+
+    <select id="getBatchAll" resultMap="ResultMap">
+        SELECT * FROM batchs 
+    </select>
+
+    <insert id="insertBatch" parameterType="com.dsqd.amc.linkedmo.model.Batch" useGeneratedKeys="true" keyProperty="txid">
+        INSERT INTO batchs (batchid, code, result, started)
+        VALUES (#{batchid}, #{code}, #{result}, NOW())
+    </insert>
+
+    <update id="updateBatch">
+        UPDATE batchs
+        SET code=#{code},
+            result=#{result},
+            ended=NOW()
+        WHERE txid=#{txid}
+    </update>
+
+    <delete id="deleteBatch">
+        DELETE batchs WHERE txid=#{txid}
+    </delete>
+</mapper>

@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>AMCProject</groupId>
 	<artifactId>safelink</artifactId>
-	<version>0.86</version>
+	<version>1.1</version>
 	<name>protoSafelink</name>
 	<dependencies>
 		<dependency>
@@ -57,6 +57,41 @@
 			<artifactId>quartz</artifactId>
 			<version>2.3.2</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		    <version>1.16.1</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.17.2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.17.2</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.24</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5.1</version>
+		</dependency>
+
 	</dependencies>
 	<profiles>
 		<!-- local: 로컬개발 (기본 값) -->
@@ -107,6 +142,15 @@
 				<version>3.1.0</version>
 			</plugin>
 			<plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-jar-plugin</artifactId>
+	            <version>3.2.0</version>
+	            <configuration>
+	                <finalName>${project.artifactId}-${project.version}-${environment}</finalName>
+	            </configuration>
+        	</plugin>
+        
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.6.0</version>
@@ -117,13 +161,18 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
+							<artifactSet>
+	                            <excludes>
+	                                <exclude>org.projectlombok:lombok</exclude>
+	                            </excludes>
+	                        </artifactSet>
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<manifestEntries>
 										<Main-Class>
 											com.dsqd.amc.linkedmo.RestServer</Main-Class>
-										<Build-Number>130</Build-Number>
+										<Build-Number>211</Build-Number>
 									</manifestEntries>
 								</transformer>
 							</transformers>

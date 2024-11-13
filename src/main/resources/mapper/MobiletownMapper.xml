@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dsqd.amc.linkedmo.mapper.MobiletownMapper">
+
+    <resultMap id="ResultMap" type="com.dsqd.amc.linkedmo.model.Mobiletown">
+        <id column="txid" property="txid" />
+        <result column="purpose" property="purpose" />
+        <result column="spuserid" property="spuserid" />
+        <result column="rcverkey" property="rcverkey" />
+        <result column="rcverphone" property="rcverphone" />
+        <result column="sendtime" property="sendtime" />
+        <result column="subject" property="subject" />
+        <result column="content" property="content" />
+        <result column="result" property="result" />
+        <result column="rnumber" property="rnumber" />
+        <result column="checktime" property="checktime" />
+        <result column="checkcode" property="checkcode" />
+        <result column="errcnt" property="errcnt" />
+    </resultMap>
+<!-- 
+	Mobiletown getMobiletown(@Param("txid") int txid);
+	List<Mobiletown> getMobiletownAll();
+	List<Mobiletown> getMobiletownByMobileid(String rcverphone);
+    void insertMobiletown(Mobiletown data);
+    void updateMobiletown(Mobiletown data);
+    void deleteMobiletown(@Param("txid") int txid);
+ -->
+    <select id="getMobiletown" resultMap="ResultMap">
+        SELECT * FROM mobiletowns WHERE txid=#{txid}
+    </select>
+    
+    <select id="getMobiletownAll" resultMap="ResultMap">
+        SELECT * FROM mobiletowns
+    </select>
+    
+   <select id="getMobiletownByMobileid" resultMap="ResultMap">
+        SELECT * FROM mobiletowns WHERE rcverphone = #{rcverphone} ORDER BY sendtime DESC
+    </select>
+
+    <insert id="insertMobiletown" parameterType="com.dsqd.amc.linkedmo.model.Mobiletown" useGeneratedKeys="true" keyProperty="txid">
+        INSERT INTO mobiletowns (purpose, spuserid, rcverkey, rcverphone, sendtime, subject, content, result, rnumber)
+        VALUES (#{purpose}, #{spuserid}, #{rcverkey}, #{rcverphone}, NOW(), #{subject}, #{content}, #{result}, #{rnumber})
+    </insert>
+
+    <update id="updateMobiletown">
+        UPDATE mobiletowns
+        SET checktime=NOW(),
+            checkcode=#{checkcode},
+            errcnt=errcnt+1
+        WHERE txid=#{txid}
+    </update>
+
+    <delete id="deleteMobiletown">
+        DELETE mobiletowns WHERE txid=#{txid}
+    </delete>
+</mapper>

@@ -20,6 +20,8 @@
         <mapper resource="mapper/SubscribeMapper.xml"/>
         <mapper resource="mapper/LoginMapper.xml"/>
         <mapper resource="mapper/BoardMapper.xml"/>
-
+		<mapper resource="mapper/BatchMapper.xml"/>
+		<mapper resource="mapper/BatchlogMapper.xml"/>
+		<mapper resource="mapper/MobiletownMapper.xml"/>
     </mappers>
 </configuration>

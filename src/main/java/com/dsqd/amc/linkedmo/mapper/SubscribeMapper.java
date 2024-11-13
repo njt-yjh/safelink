@@ -17,12 +17,16 @@ public interface SubscribeMapper {
 	List<Subscribe> getTodaySubscribeByMobileno(Subscribe data);
 	
 	List<Subscribe> getSubscribeAll();
+	
+	List<Subscribe> getSubscribeAllActive();
 
     void insertSubscribe(Subscribe data);
 
     void updateSubscribe(Subscribe data);
 
     void deleteSubscribe(@Param("id") int id);
+
+    void deleteSubscribeT0(@Param("id") int id);
     
     List<Subscribe> getCancelList();
 }

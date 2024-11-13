@@ -10,16 +10,20 @@ import com.dsqd.amc.linkedmo.model.Batch;
 @Mapper
 public interface BatchMapper {
 
-	Batch getBatchByTxid(@Param("txid") int id);
+	Batch getBatch(@Param("txid") int txid);
 	
-	List<Batch> getBatchByCode(String code);
+	List<Batch> getBatchByBatchid(String batchid);
+	
+	List<Batch> getBatchToday();
+	
+	List<Batch> getBatchTodayByBatchid(String batchid);
 	
 	List<Batch> getBatchAll();
 
-    void insertSBatch(Batch data);
+    void insertBatch(Batch data);
 
     void updateBatch(Batch data);
 
-    void deleteBatch(@Param("txid") int id);
+    void deleteBatch(@Param("txid") int txid);
     
 }

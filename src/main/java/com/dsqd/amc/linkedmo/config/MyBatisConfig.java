@@ -4,6 +4,8 @@ import com.dsqd.amc.linkedmo.util.AES256Util;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.ibatis.io.Resources;
 
 import java.io.IOException;
@@ -13,12 +15,23 @@ import java.util.Properties;
 public class MyBatisConfig {
 
     private static SqlSessionFactory sqlSessionFactory;
-
+    private static Properties applicationProperties;
+    
+    private static final Logger logger = LoggerFactory.getLogger(MyBatisConfig.class);
+    
     public static void init(String env) {
         try {
             Properties properties = new Properties();
             properties.load(Resources.getResourceAsStream("application.properties"));
-            System.out.println("environment: " + properties.getProperty("mybatis.environment"));
+            logger.info("Properties Environment: {}", properties.getProperty("mybatis.environment"));
+            logger.info("           : DB - {}", properties.getProperty("db.url"));
+            logger.info("           : REST SERVERS [NARU] - {}", properties.getProperty("initialServers"));
+            logger.info("           : REST SERVERS [SKT ] - {}", properties.getProperty("rest.url"));
+            
+            applicationProperties = new Properties();
+            applicationProperties.load(Resources.getResourceAsStream("application.properties"));
+            
+            //System.setProperty("environment", properties.getProperty("mybatis.environment"));
             
             String encryptedPassword = properties.getProperty("db.password.encrypted");
             String aesKey = properties.getProperty("aes.key");
@@ -53,5 +66,9 @@ public class MyBatisConfig {
 
     public static SqlSessionFactory getSqlSessionFactory() {
         return sqlSessionFactory;
+    }
+    
+    public static Properties getApplicationProperties() {
+    	return applicationProperties;
     }
 }

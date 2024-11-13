@@ -19,6 +19,20 @@ public class LoginService {
             return mapper.login(data);
         }
     }
+    
+    public Manager write(Manager data) {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            LoginMapper mapper = session.getMapper(LoginMapper.class);
+            return mapper.write(data);
+        }
+    }
+    
+    public Manager fail(Manager data) {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            LoginMapper mapper = session.getMapper(LoginMapper.class);
+            return mapper.login(data);
+        }
+    }
 
     public void insertManager(Manager data) {
         try (SqlSession session = sqlSessionFactory.openSession()) {

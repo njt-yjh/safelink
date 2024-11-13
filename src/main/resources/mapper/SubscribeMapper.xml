@@ -16,11 +16,18 @@
         <result column="bFP" property="bFP" />
         <result column="status" property="status" />
         <result column="offercode" property="offercode" />
+        <result column="canceled_at" property="cancelDate" />
+        <result column="cancelcode" property="cncode" />
+        <result column="spuserid" property="spuserid" />
 
     </resultMap>
 
     <select id="getSubscribeAll" resultMap="ResultMap">
         SELECT * FROM subscribe
+    </select>
+    
+    <select id="getSubscribeAllActive" resultMap="ResultMap">
+        SELECT * FROM subscribe  and status='A'
     </select>
     
    <select id="getCancelList" resultMap="ResultMap">
@@ -40,8 +47,8 @@
     </select>
 
     <insert id="insertSubscribe">
-        INSERT INTO subscribe (spcode, mobileno, agree1, agree2, agree3, offercode)
-        VALUES (#{spcode}, #{mobileno}, #{agree1}, #{agree2}, #{agree3}, #{offercode})
+        INSERT INTO subscribe (spcode, mobileno, agree1, agree2, agree3, offercode, spuserid)
+        VALUES (#{spcode}, #{mobileno}, #{agree1}, #{agree2}, #{agree3}, #{offercode}, #{spuserid})
     </insert>
 
     <update id="updateSubscribe">
@@ -62,6 +69,16 @@
        		canceled_at=NOW(), 
         	cancelcode='A0',
         	cancelreason='본인이 직접 홈페이지에서 해지'
+        WHERE id=#{id}
+    </delete>
+    
+    <!-- 배치작업에 의해 자동 삭제  -->
+    <delete id="deleteSubscribeT0">
+        UPDATE subscribe
+        SET status='D',
+       		canceled_at=NOW(), 
+        	cancelcode='T0',
+        	cancelreason='배치작업으로 삭제'
         WHERE id=#{id}
     </delete>
 </mapper>
