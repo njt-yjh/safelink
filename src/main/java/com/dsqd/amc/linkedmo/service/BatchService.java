@@ -83,4 +83,11 @@ public class BatchService {
             session.commit();
         }
     }
+    
+    public int pingQuery() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+        	BatchMapper mapper = session.getMapper(BatchMapper.class);
+        	return mapper.pingQuery();
+        }
+    }
 }

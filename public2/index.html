@@ -6,9 +6,9 @@
 
     <title>휴대폰약속번호</title>
     
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
@@ -82,6 +82,39 @@
             <div id="section01">
                 <div class="inner">
                     <h2>서비스 이용방법</h2>
+                    <div class="inner txt_wrap">
+                    <table style="margin: auto; text-align: center; max-width: 800px;">
+                    <tr><td style="font-size:28px; font-weight:bold; margin-bottom:13px; ">이렇게 사용하세요</td></tr>
+                    <tr><td height="10px">&nbsp;</td></tr>
+                    <tr><td style="font-size: 22px; font-weight: bold; line-height: 180%; color:#4362fa;" bgcolor="f5f5f5">통화방법</td></tr>
+                    <tr><td>
+                            <p style="line-height: 180%; font-size: 18px; text-align: left; margin-left:20px; text-indent: -20px; word-break: keep-all;">
+                            1. <span style="font-weight:bold;">대표번호(1555-5551)</span>와 설정하신 연결번호를 통화하고 싶은 분에게 알려주세요.
+							</p>
+							<p style="line-height: 180%; font-size: 18px; text-align: left; margin-left:20px; text-indent: -20px; word-break: keep-all;">
+							2. 상대방이 <span style="font-weight:bold;">대표번호(1555-5551)</span>로 전화를 건 후, 안내 멘트에 따라 연결번호만 입력하면 두 분만의 비밀통화가 시작됩니다.
+							</p>
+							<p style="line-height: 180%; font-size: 18px; text-align: left; margin-left:20px; text-indent: -20px; word-break: keep-all;">
+							3. 쉽고 안전하게 통화하세요.
+							</p>
+                    </td></tr>
+                    <tr><td height="10px">&nbsp;</td></tr>
+                    <tr><td style="font-size: 22px; font-weight: bold; line-height: 180%; color:#4362fa;"  bgcolor="f5f5f5">가입자 연결번호 설정방법</td></tr>
+                    <tr><td>
+                            <p style="line-height: 180%; font-size: 18px; text-align: left; margin-left:20px; text-indent: -20px; word-break: keep-all;">
+                            1. 처음 가입하시면, 연결번호는 휴대폰 번호 뒷 8자리로 자동 설정됩니다.
+							</p>
+                            <p style="line-height: 180%; font-size: 18px; text-align: left; margin-left:20px; text-indent: -20px; word-break: keep-all;">
+							2. 더 기억하기 쉬운 3~8자리 숫자로 연결번호를 변경해 보세요.
+							</p>
+							<p style="line-height: 180%; font-size: 18px; text-align: left; margin-left:20px; text-indent: -20px; word-break: keep-all;">
+							3. 필요할 때 언제든지 새로운 연결번호로 수정할 수 있습니다.
+							</p>                    
+					</td></tr>
+					<tr><td height="10px">&nbsp;</td></tr>
+                    </table>
+                            
+                    </div>
                     <div class="img_wrap">
                         <img src="images/section01_img01.jpg" alt="" class="pc_img">
                         <img src="images/section01_img02.jpg" alt="" class="tab_img">
@@ -325,13 +358,13 @@
                 <div class="info_wrap">
                     <div class="info_txt">
                         <p>
-                        	<span>올마이크레딧 (AllMyCredit)</span>
+                        	<span>올마이크레딧 (AllMyCredit) | 사업자등록번호 : 351-87-01801</span>
                         </p>
                         <p>
-                            <span>서울특별시 송파구 법원로 9길 26 3층 318호 RA385</span>
+                            <span>서울특별시 송파구 법원로 9길 26 3층 318호 RA385 | 대표자 박찬홍</span>
                         </p>
                         <p>
-                            <span>TEL : 1533-5278</span>
+                            <span>고객센터 전화번호 : 1533-5278</span>
                         </p>
                     </div>
                     <span class="copyright">Copyright ⓒ AllMyCredit. All rights reserved.</span>
@@ -349,7 +382,7 @@
     
 <script language="javascript">
 $(document).ready(function(){
-	//LoadingWithMask();
+	// LoadingWithMask();
 });
 
 function showPopup_notice() { 
@@ -376,7 +409,7 @@ function LoadingWithMask() {
     var loadingImg = '';
     loadingImg += "<div id='loadingImg' style='width:80%;height;40%; position: fixed; z-index:10000; display: none; background-color:#FFF;'>";
     loadingImg += " <table height=200 width=100%><tr><td align=center style='padding: 10px;font-size:30px; font-weight:500; '>작업공지사항<hr/></td></tr>";
-    loadingImg += " <tr><td align=center style='line-height:180%; vertical-align : top; font-size:18px;'> 안전한 서비스 제공을 위하여 시스템점검을 진행합니다. <br/><br/> 점검 일시 : 24년 11월 5일 09시 ~ 6일 12시<br/> </td></tr>";
+    loadingImg += " <tr><td align=center style='line-height:180%; vertical-align : top; font-size:18px;'> 안전한 서비스 제공을 위하여 시스템점검을 진행합니다. <br/><br/> 점검 일시 : 2024년 11월 24일 00시 ~ 06시<br/> </td></tr>";
     loadingImg += " <tr><td align=center style='line-height:180%; vertical-align : top'> <button style='margin-top: 20px; padding: 8px 15px; font-size: 14px; cursor: pointer;' onclick='LoadingWithMaskOff()'> 닫기 </button> <br/></td></tr> <tr><td>.</td></tr> </table>";
     loadingImg += "</div>";
 

@@ -27,11 +27,11 @@
     </select>
     
     <select id="getSubscribeAllActive" resultMap="ResultMap">
-        SELECT * FROM subscribe  and status='A'
+        SELECT * FROM subscribe WHERE status='A'
     </select>
     
    <select id="getCancelList" resultMap="ResultMap">
-        SELECT * FROM subscribe where status='D' or status='P'
+        SELECT * FROM subscribe WHERE status='D' or status='P'
     </select>
     
     <select id="getSubscribeById" resultMap="ResultMap">
@@ -61,6 +61,16 @@
             updated_at=NOW()
         WHERE id=#{id}
     </update>
+    
+    <update id="updateSubscribeStatus">
+        UPDATE subscribe
+        SET spcode=#{spcode},
+            mobileno=#{mobileno},
+			status=#{status},
+            updated_at=NOW(),
+            cancelreason='관리자가 상태 변경'
+        WHERE id=#{id}
+    </update>
 
 	<!-- 본인이 직접 해지요청  -->
     <delete id="deleteSubscribe">
@@ -81,4 +91,13 @@
         	cancelreason='배치작업으로 삭제'
         WHERE id=#{id}
     </delete>
+    
+    <!--  사용자 가입상태 확인용 일배치(Batch01) -->
+    <select id="getSubscribeAlltoBatch01" resultMap="ResultMap">
+	    SELECT * FROM subscribe 
+		WHERE 1=1
+			AND DATE(NOW()) > DATE(created_at)
+		ORDER BY 
+			created_at ASC; 
+    </select>   
 </mapper>

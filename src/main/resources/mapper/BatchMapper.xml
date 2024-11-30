@@ -59,4 +59,8 @@
     <delete id="deleteBatch">
         DELETE batchs WHERE txid=#{txid}
     </delete>
+    
+   <select id="pingQuery" resultType="int">
+        SELECT 1
+    </select>
 </mapper>

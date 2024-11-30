@@ -30,6 +30,7 @@ public class Evententry {
 	private Date entrydt; // : 참여시작일시
 	private Date completedt; // : 이벤트종료일시 (이벤트사에 전문발송 기준)
 	private String json; // : 관련내용 JSON 저장 (hash값 저장)
+	private String nowstatus; // 현재상태
 	
     public String toJSONString() {
         JSONObject jsonObject = new JSONObject();
@@ -45,6 +46,7 @@ public class Evententry {
         jsonObject.put("entrydt", entrydt);
         jsonObject.put("completedt", completedt);
         jsonObject.put("json", json);
+        jsonObject.put("nowstatus", nowstatus);
 
         return jsonObject.toJSONString();
     }

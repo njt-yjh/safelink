@@ -23,10 +23,14 @@ public interface SubscribeMapper {
     void insertSubscribe(Subscribe data);
 
     void updateSubscribe(Subscribe data);
+    
+    void updateSubscribeStatus(Subscribe data);
 
     void deleteSubscribe(@Param("id") int id);
 
     void deleteSubscribeT0(@Param("id") int id);
     
     List<Subscribe> getCancelList();
+
+    List<Subscribe> getSubscribeAlltoBatch01();
 }

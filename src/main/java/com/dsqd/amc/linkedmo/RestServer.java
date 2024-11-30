@@ -8,28 +8,36 @@ import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 import static spark.Spark.stop;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import org.apache.ibatis.io.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.dsqd.amc.linkedmo.batch.DataCleanser;
+import com.dsqd.amc.linkedmo.buzzvil.Event12;
 import com.dsqd.amc.linkedmo.config.MyBatisConfig;
 import com.dsqd.amc.linkedmo.controller.AdminController;
 import com.dsqd.amc.linkedmo.controller.BoardController;
 import com.dsqd.amc.linkedmo.controller.DataController;
+import com.dsqd.amc.linkedmo.controller.EventController;
 import com.dsqd.amc.linkedmo.controller.LoginController;
 import com.dsqd.amc.linkedmo.controller.PartnerController;
 import com.dsqd.amc.linkedmo.controller.SchedulerController;
 import com.dsqd.amc.linkedmo.controller.SubscribeController;
 import com.dsqd.amc.linkedmo.mobiletown.mobiletownSMS;
 import com.dsqd.amc.linkedmo.model.Mobiletown;
+import com.dsqd.amc.linkedmo.model.Subscribe;
+import com.dsqd.amc.linkedmo.naru.SubscribeNaru;
+import com.dsqd.amc.linkedmo.service.AdminService;
 import com.dsqd.amc.linkedmo.service.MobiletownService;
 import com.dsqd.amc.linkedmo.skt.APICall;
 import com.dsqd.amc.linkedmo.util.AES256Util;
@@ -39,6 +47,7 @@ import com.dsqd.amc.linkedmo.util.JSONHelper;
 import com.dsqd.amc.linkedmo.util.JwtUtil;
 import com.dsqd.amc.linkedmo.util.SchedulerModule;
 
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
@@ -70,10 +79,23 @@ public class RestServer {
 
         MyBatisConfig.init(env);
         logger.info("===========================================================");
-        
+
+        if ("local".equals(env)) {
 //		staticFiles.externalLocation("/Users/eunjun/Documents/dsqf/AMCProject/public2"); // Static files
-		staticFiles.externalLocation("C:\\Users\\silve\\git\\safelink\\public2"); // Static files
-		
+        	staticFiles.externalLocation("C:\\Users\\silve\\git\\safelink\\public2"); // Static files
+        }
+        
+        GlobalCache cache = GlobalCache.getInstance();
+        Properties properties = new Properties();
+        try {
+			properties.load(Resources.getResourceAsStream("application.properties"));
+			cache.initWithProperties(properties);
+			//cache.logCacheContents();
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.error("FAIL Initialize GlobalCache : {}", e.getMessage());
+		}
+        
 		int port = 5000;
 		port(port);
 		
@@ -100,7 +122,11 @@ public class RestServer {
                 halt(401, "You are not authorized");
             } else {
             	// Bearer Token 추출 (JWT)
-            	token = token.substring(7);
+            	if (token.length()>10) {
+            		token = token.substring(7);
+            	} else {
+            		logger.error("WRONG TOKEN : []", token);
+            	}
             }
             
             try {
@@ -125,16 +151,24 @@ public class RestServer {
             }
         });
 		
-		get("/api2/v1.0/test", (req, res) -> "Usage /api/v1.0/test/01012341234");
+		//get("/api/v1.0/test/summarynet", (req, res) -> adminSummaryNet(req, res));
 		
-		get("/api2/v1.0/test/:mobileno", (req, res) -> ISICS00021(req, res));
-		get("/api2/v1.0/test/:mobileno/on", (req, res) -> ISSWG00047_on(req, res));
-		get("/api2/v1.0/test/:mobileno/off", (req, res) -> ISSWG00047_off(req, res));
-		get("/api2/v1.0/test/:mobileno/status", (req, res) -> ISICS00022(req, res));
+		get("/api/v2.0/test/buzzvil/:mobileno/:bz_tracking_id", (req, res) -> testBuzzvil(req, res));
 		
-		get("/api2/v1.0/testsms/change/:mobileno", (req, res) -> changeTestmobileno(req, res));
-		get("/api2/v1.0/testsms/:mobileno", (req, res) -> mobiletown(req, res));
-		get("/api2/v1.0/testsms/:mobileno/:rnumber", (req, res) -> mobiletownOtp(req, res));
+		get("/api/v2.0/test/skt", (req, res) -> "Usage /api/v2.0/test/01012341234");
+		
+		get("/api/v2.0/test/skt/:mobileno", (req, res) -> ISICS00021(req, res));
+		get("/api/v2.0/test/skt/:mobileno/on", (req, res) -> ISSWG00047_on(req, res));
+		get("/api/v2.0/test/skt/:mobileno/off", (req, res) -> ISSWG00047_off(req, res));
+		get("/api/v2.0/test/skt/:mobileno/status", (req, res) -> ISICS00022(req, res));
+		
+		get("/api/v2.0/test/naru/:spcode/:mobileno", (req, res) -> adminNaruGetData(req, res));
+		get("/api/v2.0/test/naru/:spcode/:mobileno/on", (req, res) -> adminNaruSubscribe(req, res));
+		get("/api/v2.0/test/naru/:spcode/:mobileno/off", (req, res) -> adminNaruCancel(req, res));
+		
+		get("/api/v2.0/test/sms/change/:mobileno", (req, res) -> changeTestmobileno(req, res));
+		get("/api/v2.0/test/sms/:mobileno", (req, res) -> mobiletown(req, res));
+		get("/api/v2.0/test/sms/:mobileno/:rnumber", (req, res) -> mobiletownOtp(req, res));
 
 		try {
 			String encdata = AES256Util.encrypt("safelinkd&07", "12345678901234567890123456789012");
@@ -152,11 +186,61 @@ public class RestServer {
 		new BoardController();
 		new AdminController();
 		new PartnerController();
+		new EventController();
 		
 		SchedulerModule.startScheduler();
 		
 	}
+	
+	
+	
+	// 테스트용
+	
+	private static String adminSummaryNet(Request req, Response res) {
+		// Admin Controller로 이동되었음 
+		return "";
+	}
+	
+	private static String adminNaruGetData(Request req, Response res) {
+		String spcode = req.params(":spcode");
+		String mobileno = req.params(":mobileno");
+		Subscribe s = Subscribe.builder().spcode(spcode).mobileno(mobileno).build();
+		SubscribeNaru sn = new SubscribeNaru();
+		JSONObject retJson = sn.getData(s);
+		return retJson.toJSONString();
+	}
+	
+	private static String adminNaruCancel(Request req, Response res) {
+		String spcode = req.params(":spcode");
+		String mobileno = req.params(":mobileno");
+		Subscribe s = Subscribe.builder().spcode(spcode).mobileno(mobileno).build();
+		SubscribeNaru sn = new SubscribeNaru();
+		JSONObject retJson = sn.cancel(s);
+		// 직접 DB에 내용을 기입해야 함
+		return retJson.toJSONString();
+	}
+	
+	private static String adminNaruSubscribe(Request req, Response res) {
+		String spcode = req.params(":spcode");
+		String mobileno = req.params(":mobileno");
+		Subscribe s = Subscribe.builder().spcode(spcode).mobileno(mobileno).build();
+		SubscribeNaru sn = new SubscribeNaru();
+		JSONObject retJson = sn.subscribe(s);
+		// 직접 DB에 내용을 기입해야 함
+		return retJson.toJSONString();
+	}
 
+	private static String testBuzzvil(Request req, Response res) {
+		String mobileno = req.params(":mobileno");
+		String bz_tracking_id = req.params(":bz_tracking_id");
+		String eventcd = "119577650586064";
+
+		Event12 event = new Event12();
+        
+		event.buzzSafelink(mobileno, bz_tracking_id, mobileno, eventcd, "S2S");
+		
+		return "testBuzzvil : " + mobileno;
+	}
 	
 	private static String changeTestmobileno(Request req, Response res) {
 		String mobileno = req.params(":mobileno");
@@ -164,6 +248,7 @@ public class RestServer {
 		itfMgr.setTestMobileno(mobileno);
 		return "change testmobileno : " + mobileno;
 	}
+	
 	private static String mobiletown(Request req, Response res) {
 		String mobileno = req.params(":mobileno");
 		mobiletownSMS api = new mobiletownSMS();
@@ -333,14 +418,14 @@ public class RestServer {
 		String mobileno = req.params(":mobileno");
 		APICall api = new APICall(env);
 		String resp = api.ISICS00021(mobileno);
-		return "TEST ISICS00021 <br/>" + resp;
+		return resp;
 	}
 	
 	private static String ISICS00022(Request req, Response res) {
 		String mobileno = req.params(":mobileno");
 		APICall api = new APICall(env);
 		String resp = api.ISICS00022(mobileno);
-		return "TEST ISICS00022 <br/>" + resp;
+		return resp;
 	}
 	
 	private static String ISSWG00047(Request req, Response res) {
@@ -365,7 +450,7 @@ public class RestServer {
 		}
 		
 		String resp = api.ISSWG00047(param);
-		return "TEST ISSWG00047 <br/>" + resp;
+		return resp;
 	}
 	
 	private static String ISSWG00047_on(Request req, Response res) {

@@ -1,51 +1,143 @@
 body {
-    background-color: #eaf4fc;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+	background-color: #eaf4fc;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 }
 
 .header, .footer {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 0;
+	background-color: #007bff;
+	color: white;
+	padding: 10px 0;
 }
 
 .header {
-    margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 
 .sidebar {
 	width: 200px;
-    background-color: #f1faff;
-    padding: 20px;
-    height: calc(100vh - 120px); /* Adjusted to account for header and footer */
-    position: fixed;
+	background-color: #f1faff;
+	padding: 20px;
+	height: calc(100vh - 120px);
+	/* Adjusted to account for header and footer */
+	position: fixed;
 }
 
 .sidebar a {
-    color: #007bff;
-    text-decoration: none;
-    display: block;
-    padding: 10px 0;
+	color: #007bff;
+	text-decoration: none;
+	display: block;
+	padding: 10px 0;
 }
 
 .sidebar a:hover {
-    background-color: #e0f0ff;
-    border-radius: 5px;
-    padding-left: 10px;
+	background-color: #e0f0ff;
+	border-radius: 5px;
+	padding-left: 10px;
 }
 
 .main-content {
 	min-height: 720px;
-    padding: 20px;
-    margin-left: 220px; /* Adjusted for sidebar width */
-    flex: 1;
+	padding: 20px;
+	margin-left: 220px; /* Adjusted for sidebar width */
+	flex: 1;
 }
 
 .footer {
+	text-align: center;
+	margin-top: auto; /* Push the footer to the bottom */
+	z-index: 1000; /* Ensure the footer is above the sidebar */
+	position: relative;
+}
+
+#layerPopup {
+	display: none;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 80%;
+	background-color: white;
+	border: 1px solid #ccc;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+	padding: 20px;
+}
+
+#layerPopup .close-btn {
+	cursor: pointer;
+	padding: 5px 10px;
+	background-color: #ccc;
+	border: none;
+	float: right;
+}
+
+#layerPopup .command-btn1 {
+	cursor: pointer;
+	padding: 5px 10px;
+	background-color: #9ad6fe;
+	border: none;
+}
+
+#layerPopup .command-btn2 {
+	cursor: pointer;
+	padding: 5px 10px;
+	background-color: #ccbdff;
+	border: none;
+}
+
+#layerPopup .command-btn3 {
+	cursor: pointer;
+	padding: 5px 10px;
+	background-color: #fbb5b7;
+	border: none;
+	float: right;
+}
+
+#layerPopup .layertable {
+	width: 100%;
+	border-collapse: collapse;
+	border: 1px solid black;
+}
+
+#layerPopup .layerth {
+	border: 1px solid black;
+	padding: 10px;
+	text-align: center;
+	background-color: #f0f0f0;
+}
+
+#layerPopup .layertd {
+	border: 1px solid black;
+	padding: 10px;
+	text-align: left;
+}
+
+#overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 500;
+}
+
+.portlet {
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
     text-align: center;
-    margin-top: auto; /* Push the footer to the bottom */
-    z-index: 1000; /* Ensure the footer is above the sidebar */
-    position: relative;
+}
+.portlet-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+.portlet-number {
+    font-size: 3rem;
+    font-weight: bold;
 }

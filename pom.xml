@@ -172,7 +172,7 @@
 									<manifestEntries>
 										<Main-Class>
 											com.dsqd.amc.linkedmo.RestServer</Main-Class>
-										<Build-Number>211</Build-Number>
+										<Build-Number>231</Build-Number>
 									</manifestEntries>
 								</transformer>
 							</transformers>

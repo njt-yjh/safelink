@@ -21,6 +21,7 @@ import com.dsqd.amc.linkedmo.skt.SubscribeSK;
 import com.dsqd.amc.linkedmo.util.AES256Util;
 import com.dsqd.amc.linkedmo.util.InterfaceManager;
 import com.dsqd.amc.linkedmo.util.JSONHelper;
+import com.dsqd.amc.linkedmo.util.TestMobileno;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -170,6 +171,7 @@ public class SubscribeController {
 								}
 							} catch (Exception e) {
 								e.printStackTrace();
+								logger.error("CHECK CODE 검증시 오류 : [{}]", e.getMessage());
 								return JSONHelper.assembleResponse(952, "정상적인 방법으로 인증번호를 입력하고 가입하여 주세요.[952]");
 							}
 						} else {
@@ -182,10 +184,13 @@ public class SubscribeController {
 						//오늘 가입한 적이 있는 휴대전화번호인지 확인함
 						List <Subscribe> todayMobileno = service.getTodaySubscribeByMobileno(data);
 						
+						// TEST 전용폰 확인하여 당일해지자 가입방지 로직 Skeip
+						TestMobileno tm = new TestMobileno();
+						
 						if (checkDup.size() > 0) {
 							return JSONHelper.assembleResponse(901, "이미 가입된 전화번호입니다.[901]");
 							
-						} else if (todayMobileno.size() > 0) { // 오늘 가입한적이 있음 
+						} else if (todayMobileno.size() > 0 && !tm.isTestphone(data.getMobileno())) { // 오늘 가입한적이 있음 
 							return JSONHelper.assembleResponse(902, "입력하신 전화번호는 해지관련 전산처리 중으로 내일 가입이 가능합니다.[902]");
 							
 						} else { // 정상 가입 프로세스 시작 
@@ -287,10 +292,20 @@ public class SubscribeController {
 								data.setSpuserid(responseJSON.getAsString("SVC_MGMT_NUM"));
 							
 							SubscribeMobiletown smt = new SubscribeMobiletown();
-							// 개발서버일 경우에는 SMS를 다른 폰으로 쏜다. ===================
-							if ((System.getProperty("argEnv")).equals("dev"))  mobileno = itfMgr.getTestMobileno();
-							// ===============================================================
-							JSONObject json = smt.subscribeMobiletown(mobileno, data.getSpuserid());
+							JSONObject json = new JSONObject();
+							TestMobileno tm = new TestMobileno();
+
+							if (tm.isTestphone(mobileno)) {
+								// 특정 핸드폰의 경우에는 SMS를 발송하지 않고 저장함
+								json = smt.subscribeMobiletownPseudo(mobileno, data.getSpuserid());
+								
+							} else {
+								// 개발서버일 경우에는 SMS를 다른 폰으로 쏜다. ===================
+								if ((System.getProperty("argEnv")).equals("dev"))  mobileno = itfMgr.getTestMobileno();
+								// ===============================================================
+								json = smt.subscribeMobiletown(mobileno, data.getSpuserid());
+							}
+							
 							if (200 == (int) json.get("code")) {
 								code = 200;
 								msg = "";
@@ -313,9 +328,16 @@ public class SubscribeController {
 							String rnumber = jsonObject.getAsString("rnumber");
 							
 							SubscribeMobiletown smt = new SubscribeMobiletown();
-							// 개발서버일 경우에는 SMS를 다른 폰으로 쏜다. ===================
-							if ((System.getProperty("argEnv")).equals("dev"))  mobileno = itfMgr.getTestMobileno();
-							// ===============================================================
+							TestMobileno tm = new TestMobileno();
+
+							if (tm.isTestphone(mobileno)) {
+								
+							} else {
+								// 개발서버일 경우에는 SMS를 다른 폰으로 쏜다. ===================
+								if ((System.getProperty("argEnv")).equals("dev"))  mobileno = itfMgr.getTestMobileno();
+								// ===============================================================
+							}
+							
 							JSONObject json = smt.subscribeMobiletownOtp(mobileno, rnumber);
 							if (200 == (int) json.get("code")) {
 								json.put("code", 200);
@@ -433,10 +455,19 @@ public class SubscribeController {
 							List<Subscribe> targets = service.getSubscribeByMobileno(data);
 							if (targets != null && targets.size()>0) {
 								SubscribeMobiletown smt = new SubscribeMobiletown();
-								// 개발서버일 경우에는 SMS를 다른 폰으로 쏜다. ===================
-								if ((System.getProperty("argEnv")).equals("dev"))  mobileno = itfMgr.getTestMobileno();
-								// ===============================================================
-								JSONObject json = smt.cancelMobiletown(mobileno, data.getSpuserid());
+								JSONObject json = new JSONObject();
+								TestMobileno tm = new TestMobileno();
+
+								if (tm.isTestphone(mobileno)) {
+									// 특정 핸드폰의 경우에는 SMS를 발송하지 않고 저장함
+									json = smt.cancelMobiletownPseudo(mobileno, data.getSpuserid());
+									
+								} else {
+									// 개발서버일 경우에는 SMS를 다른 폰으로 쏜다. ===================
+									if ((System.getProperty("argEnv")).equals("dev"))  mobileno = itfMgr.getTestMobileno();
+									// ===============================================================
+									json = smt.cancelMobiletown(mobileno, data.getSpuserid());
+								}
 								if (200 == (int) json.get("code")) {
 									code = 200;
 									msg = "";
@@ -463,10 +494,18 @@ public class SubscribeController {
 							String rnumber = jsonObject.getAsString("rnumber");
 							
 							SubscribeMobiletown smt = new SubscribeMobiletown();
-							// 개발서버일 경우에는 SMS를 다른 폰으로 쏜다. ===================
-							if ((System.getProperty("argEnv")).equals("dev"))  mobileno = itfMgr.getTestMobileno();
-							// ===============================================================
-							JSONObject json = smt.cancelMobiletownOtp(mobileno, rnumber);
+							JSONObject json = new JSONObject();
+							TestMobileno tm = new TestMobileno();
+
+							if (tm.isTestphone(mobileno)) {
+								// 특정 핸드폰의 경우에는 SMS를 발송하지 않고 저장함
+								
+							} else {
+								// 개발서버일 경우에는 SMS를 다른 폰으로 쏜다. ===================
+								if ((System.getProperty("argEnv")).equals("dev"))  mobileno = itfMgr.getTestMobileno();
+								// ===============================================================
+							}
+							json = smt.cancelMobiletownOtp(mobileno, rnumber);
 
 							if (200 == (int) json.get("code")) {
 								json.put("code", 200);

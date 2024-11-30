@@ -35,6 +35,8 @@
 			                <th>상태코드</th>
 			                <th>가입구분</th>
 			                <th>가입일시</th>
+			                <th>해지일시</th>
+			                <th>비고</th>
 			            </tr>
 			        </thead>
 			        <tbody></tbody>
@@ -50,10 +52,12 @@
 <div id="footerPanel"></div>
 </section>
 
+<div id="overlay"></div> <div id="layerPopup"> <div id="popupContent"></div> <button id='btnPopupclose' class="close-btn">Close</button> </div>
+		
 <!-- Bootstrap Bundle with Popper and jQuery -->
 <script src="//cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../js/admin.js"></script>
+<script src="../js/admin.js??20241117"></script>
 
 <!-- DataTables JS -->
 <script src="//cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -65,9 +69,79 @@
 <script src="//cdn.datatables.net/buttons/2.1.1/js/buttons.html5.min.js"></script>
 
 <script>
+
+function viewNaru(spcode, mobileno) {
+	if (!confirm ( '나루 데이터조회를 하시겠습니까?' + "-" + spcode +": "+ mobileno )) return;
+	const url = '/api/v2.0/test/naru/'+spcode+'/'+mobileno; 
+	fetch(url, { 
+		method: 'GET', 
+		headers: { 'Authorization': 'Bearer ' + token } // Authorization 헤더 추가 
+	})
+	.then(response => { 
+		if (!response.ok) { 
+			throw new Error('Network response was not ok ' + response.statusText); 
+			} 
+		return response.json();})
+		.then(data => { 
+			alert('Response: ' + JSON.stringify(data));})
+		.catch(error => { 
+			alert('Error: ' + error);
+	});
+}
+
+function cancelNaru(spcode, mobileno) {
+	if (!confirm ( '나루 서비스를 해지 하시겠습니까?' + "-" + spcode +": "+ mobileno )) return;
+	if (!confirm ( '정말 서비스를 해지 하시겠습니까?' + "-" + spcode +": "+ mobileno )) return;
+	
+	const url = '/api/v2.0/test/naru/'+spcode+'/'+mobileno+'/off'; 
+	fetch(url, { 
+		method: 'GET', 
+		headers: { 'Authorization': 'Bearer ' + token } // Authorization 헤더 추가 
+	})
+	.then(response => { 
+		if (!response.ok) { 
+			throw new Error('Network response was not ok ' + response.statusText); 
+			} 
+		return response.json();})
+		.then(data => { 
+			alert('Response: ' + JSON.stringify(data));})
+		.catch(error => { 
+			alert('Error: ' + error);
+	});
+}
+
+function viewSKT(spcode, mobileno) {
+	if (!confirm ( '통신사 데이터조회를 하시겠습니까?' + "-" + spcode +": "+ mobileno )) return;
+	
+	const url = '/api/v2.0/test/skt/'+mobileno+'/status'; 
+	fetch(url, { 
+		method: 'GET', 
+		headers: { 'Authorization': 'Bearer ' + token } // Authorization 헤더 추가 
+	})
+	.then(response => { 
+		if (!response.ok) { 
+			throw new Error('Network response was not ok ' + response.statusText); 
+			} 
+		return response.json();})
+		.then(data => { 
+			alert('Response: ' + JSON.stringify(data));})
+		.catch(error => { 
+			alert('Error: ' + error);
+	});
+}
+
+function cancelSKT(spcode, mobileno) {
+	alert('개발중');
+}
+
+function cancelDB(spcode, mobileno) {
+	alert('개발중');
+}
+
+
 $(document).ready(function() {
 
-    $('#subscribeTable').DataTable({
+	var table = $('#subscribeTable').DataTable({
         "processing": true,
         "serverSide": false,
         "ajax": {
@@ -76,12 +150,16 @@ $(document).ready(function() {
                 'Authorization': 'Bearer ' + token
             },
             "type": "GET",
-            "dataSrc": function (json) {
+            "dataSrc": function (json, status, xhr) { 
             	let formattedData = json.data.map(item => {
                     return {
                         ...item,
                         status: formatStatus(item.status),
-                        createDate: formatDate(item.createDate)
+                        offercode: formatOffercode(item.offercode),
+                        createDate: formatDate(item.createDate),
+                        cancelDate: formatDate(item.cancelDate),
+                        //buttons: "<button name='view_naru'>나루조회</button> <button name='cancel_naru'>나루해지</button> <button name='view_skt'>SKT조회</button> <button name='cancel_skt'>SKT해지</button>"
+                        buttons: ""
                     };
                 });
             	return formattedData
@@ -97,6 +175,13 @@ $(document).ready(function() {
            		} else { 
            			console.error('AJAX 요청 실패:', error, thrown);
             	}
+            },
+            "complete": function(xhr) {
+	        	const authorizationHeader = xhr.getResponseHeader('Authorization');
+	            if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
+	                const token = authorizationHeader.substring(7); // 'Bearer ' 이후의 문자열 추출
+	                sessionStorage.setItem("token", token);
+	            }
             }
         },
         "columns": [
@@ -105,7 +190,9 @@ $(document).ready(function() {
             { "data": "mobileno" },
             { "data": "status" },
             { "data": "offercode" },
-            { "data": "createDate" }
+            { "data": "createDate" },
+            { "data": "cancelDate" },
+            { "data" : "buttons"}
         ],
         "language": {
             "search": "검색:",
@@ -125,6 +212,42 @@ $(document).ready(function() {
         dom: '<"top"lfB>rt<"bottom"ip><"clear">',
         buttons: [ { extend: 'excelHtml5', text: '엑셀로 내보내기', className: 'btn btn-primary' } ]
     });
+    
+   
+    $('#subscribeTable tbody').on('click', 'td:nth-child(3)', 
+    		function() { 
+        		var data = $('#subscribeTable').DataTable().row( $(this).parents('tr') ).data();
+    			//alert('You clicked on: ' + data.mobileno); 
+    			$('#popupContent').load('./layer_popup.html', 
+    				function() { 
+    					$('#overlay').show(); $('#layerPopup').fadeIn();
+    					$('#popupContent table tbody tr:eq(0) td:eq(0)').text(data.id);
+    					$('#popupContent table tbody tr:eq(0) td:eq(1)').text(data.createDate);
+    					$('#popupContent table tbody tr:eq(0) td:eq(2)').text(data.cancelDate);
+    					$('#popupContent table tbody tr:eq(0) td:eq(3)').text(data.spcode);
+    					$('#popupContent table tbody tr:eq(0) td:eq(4)').text(data.mobileno);
+    					$('#popupContent table tbody tr:eq(0) td:eq(5)').text(data.status);
+    			});
+   			}
+    );
+    
+    $('#layerPopup').on('click', '.close-btn', function() { $('#layerPopup').fadeOut(function() { $('#overlay').hide(); }); });
+    
+    $('#subscribeTable tbody').on('click', 'button', function () {
+        var data = $('#subscribeTable').DataTable().row( $(this).parents('tr') ).data();
+        console.log(data);
+        console.log(this.name);
+        if (this.name == "view_naru") {
+        	viewNaru(data.spcode, data.mobileno);
+        	
+        } else if (this.name == "cancel_naru") {
+        	cancelNaru(data.spcode, data.mobileno);
+        
+        } else if (this.name == "view_skt") {
+        	viewSKT(data.spcode, data.mobileno);
+
+        }
+   } );
 });
 </script>
 </body>

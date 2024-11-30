@@ -26,7 +26,22 @@ function formatStatus(code) {
 	}
 }
 
+function formatOffercode(code) {
+	if (code=="11") {
+		return "OHC";
+	} else if (code=="12") {
+		return "Buzzvil";
+	} else if (code=="91") {
+		return "ARS연계";
+	} else if (code=="00") {
+		return "홈페이지";
+	} else {
+		return "NaN";
+	}
+}
+
 function formatDate(dateString) {
+	if (dateString == "" || dateString == null) return "";
     const date = new Date(dateString.replaceAll(" KST ", " "));
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');

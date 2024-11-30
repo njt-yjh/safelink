@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Layer Popup Content</title>
+</head>
+<body>
+    <table class='layertable' style='margin-bottom:10px;'>
+        <thead>
+            <tr>
+            	<th class='layerth'>가입번호</th>
+            	<th class='layerth'>가입일시</th>
+            	<th class='layerth'>해지일시</th>
+                <th class='layerth'>통신사</th>
+                <th class='layerth'>전화번호</th>
+                <th class='layerth'>현재상태</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+            	<td id='psbid' class='layertd'></td>
+            	<td id='psbcrdt' class='layertd'></td>
+            	<td id='psbcndt' class='layertd'></td>
+                <td id='pspcode' class='layertd'></td>
+                <td id='pmobileno' class='layertd'></td>
+                <td></td class='layertd'>
+            </tr>
+            <tr>
+                <td colspan=6 class='layertd'>
+					<button name='view_naru' class='command-btn1' onclick="viewNaru($('#pspcode').text(), $('#pmobileno').text())">나루조회</button> 
+					<button name='cancel_naru' class='command-btn1'  onclick="cancelNaru($('#pspcode').text(), $('#pmobileno').text())">나루해지</button>
+					&nbsp;|&nbsp; 
+					<button name='view_skt' class='command-btn2'  onclick="viewSKT($('#pspcode').text(), $('#pmobileno').text())">SKT조회</button> 
+					<button name='cancel_skt' class='command-btn2'  onclick="cancelSKT($('#pspcode').text(), $('#pmobileno').text())">SKT해지</button>
+					&nbsp;|&nbsp;
+					<button name='cancel_db' class='command-btn3'  onclick="cancelDB($('#pspcode').text(), $('#pmobileno').text())">DB해지처리</button>
+				</td>
+            </tr>
+            <!-- 추가 데이터 행들 -->
+        </tbody>
+    </table>
+</body>
+</html>

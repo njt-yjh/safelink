@@ -13,10 +13,14 @@ public interface EvententryMapper {
 	Evententry getEvententryById(@Param("txid") int txid);
 	
 	List<Evententry> getAllEvententry();
+	
+	List<Evententry> getAllEvententry2();
 
 	void insertEvententry(Evententry data);
 
 	void updateEvententry(Evententry data);
 
 	void deleteEvententry(@Param("txid") int txid);
+	
+	int getSubcribeIDByMobileno(@Param("mobileno") String mobileno);
 }

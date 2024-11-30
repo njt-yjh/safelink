@@ -26,4 +26,6 @@ public interface BatchMapper {
 
     void deleteBatch(@Param("txid") int txid);
     
+    int pingQuery();
+    
 }

@@ -34,7 +34,9 @@
 			                <th>통신사</th>
 			                <th>전화번호</th>
 			                <th>상태코드</th>
+			                <th>해지사유</th>
 			                <th>해지일시</th>
+			                <th>가입일시</th>
 			            </tr>
 			        </thead>
 			        <tbody></tbody>
@@ -87,6 +89,16 @@ $(document).ready(function() {
 		}
 	}
 	
+	function formatCnCode(code) {
+		if (code=="A0") {
+			return "본인해지";
+		} else if (code == "T0") {
+			return "통신사해지";
+		} else {
+			return code
+		}
+	}
+	
     $('#cancelTable').DataTable({
         "processing": true,
         "serverSide": false,
@@ -101,7 +113,9 @@ $(document).ready(function() {
                     return {
                         ...item,
                         status: formatStatus(item.status),
-                        cancelDate: formatDate(item.cancelDate)
+                        cancelDate: formatDate(item.cancelDate),
+                        createDate: formatDate(item.createDate),
+                        cncode: formatCnCode(item.cncode)
                     };
                 });
             	return formattedData
@@ -117,6 +131,13 @@ $(document).ready(function() {
            		} else { 
            			console.error('AJAX 요청 실패:', error, thrown);
             	}
+            },
+            "complete": function(xhr) {
+	        	const authorizationHeader = xhr.getResponseHeader('Authorization');
+	            if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
+	                const token = authorizationHeader.substring(7); // 'Bearer ' 이후의 문자열 추출
+	                sessionStorage.setItem("token", token);
+	            }
             }
         },
         "columns": [
@@ -124,7 +145,9 @@ $(document).ready(function() {
             { "data": "spcode" },
             { "data": "mobileno" },
             { "data": "status" },
-            { "data": "cancelDate" }
+            { "data": "cncode" },
+            { "data": "cancelDate" },
+            { "data": "createDate" }
         ],
         "language": {
             "search": "검색:",
@@ -140,7 +163,7 @@ $(document).ready(function() {
                 "previous": "이전"
             }
         }, 
-        order: [[4, 'desc']],
+        order: [[5, 'desc']],
         dom: '<"top"lfB>rt<"bottom"ip><"clear">',
         buttons: [ { extend: 'excelHtml5', text: '엑셀로 내보내기', className: 'btn btn-primary' } ]
     });

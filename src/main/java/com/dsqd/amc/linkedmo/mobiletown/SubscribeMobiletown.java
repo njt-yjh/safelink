@@ -17,6 +17,11 @@ public class SubscribeMobiletown {
 		return mobiletown("S", mobileno, spuserid);
 	}
 	
+	// 가입시 인증번호 발송 (테스트폰전용)
+	public JSONObject subscribeMobiletownPseudo(String mobileno, String spuserid) {
+		return mobiletownPseuo("S", mobileno, spuserid);
+	}
+	
 	// 가입시 인증번호 검증 
 	public JSONObject subscribeMobiletownOtp(String mobileno, String rnumber) {
 		return mobiletownOtp("S", mobileno, rnumber);
@@ -25,6 +30,11 @@ public class SubscribeMobiletown {
 	// 취소시 인증번호 발송
 	public JSONObject cancelMobiletown(String mobileno, String spuserid) {
 		return mobiletown("C", mobileno, spuserid);
+	}
+
+	// 취소시 인증번호 발송 (테스트폰전용)
+	public JSONObject cancelMobiletownPseudo(String mobileno, String spuserid) {
+		return mobiletownPseuo("C", mobileno, spuserid);
 	}
 
 	// 취소시 인증번호 검증
@@ -69,6 +79,40 @@ public class SubscribeMobiletown {
 		String rnumber = api.genRandoms();
 		String message = api.setMessage1(rnumber);
 		JSONObject resp = api.sendSms(mobileno, message);
+		int code = (int) resp.get("code");
+		msg = resp.getAsString("msg");
+		String key = resp.getAsString("key");
+		if (code == 200) {
+			MobiletownService service = new MobiletownService();
+			Mobiletown mt = Mobiletown.builder().purpose(purpose)
+									  .spuserid(spuserid)
+									  .rcverkey(key).rcverphone(mobileno)
+									  .content(message).rnumber(rnumber)
+									  .result(resp.toJSONString())
+									  .checkcode("T")
+									  .build();
+			service.insertMobiletown(mt); 
+			msg = "";
+		}
+		retObj.put("code", code);
+		retObj.put("msg", msg);
+		return retObj;
+	}
+	
+	// 모바일로 인증번호를 보내지 않음.
+	private JSONObject mobiletownPseuo(String purpose, String mobileno, String spuserid) {
+		JSONObject retObj = new JSONObject();
+		String msg = "";
+		mobiletownSMS api = new mobiletownSMS();
+		//String rnumber = api.genRandoms();
+		String rnumber = "999123";
+		String message = "테스트를 위한 Pseudo 메시지입니다.";
+		//JSONObject resp = api.sendSms(mobileno, message);
+		JSONObject resp = new JSONObject();
+		resp.put("code", 200);
+		resp.put("msg", "테스트를 위한 Pseudo 메시지입니다.");
+		resp.put("key", "0000000000000000000000000000");
+		
 		int code = (int) resp.get("code");
 		msg = resp.getAsString("msg");
 		String key = resp.getAsString("key");

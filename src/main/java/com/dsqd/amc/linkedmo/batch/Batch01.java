@@ -1,4 +1,4 @@
-package com.dsqd.amc.linkedmo.util;
+package com.dsqd.amc.linkedmo.batch;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -22,6 +22,8 @@ import com.dsqd.amc.linkedmo.service.BoardService;
 import com.dsqd.amc.linkedmo.service.SubscribeService;
 import com.dsqd.amc.linkedmo.skt.APICall;
 import com.dsqd.amc.linkedmo.skt.SubscribeSK;
+import com.dsqd.amc.linkedmo.util.InterfaceManager;
+import com.dsqd.amc.linkedmo.util.Task;
 
 import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 import net.minidev.json.JSONObject;
@@ -61,7 +63,7 @@ public class Batch01 implements Task {
     public void executeTask(Map<String, Object> params, int triggerId) {
 		Properties prop = MyBatisConfig.getApplicationProperties();
 		String env = System.getProperty("argEnv"); // local, dev, prod
-		String batch_name = "Batch01";
+		String batch_name = "Batch01-PayUserCheck";
 		
 		SubscribeService service = new SubscribeService();
 		BatchService bService = new BatchService();
@@ -75,7 +77,7 @@ public class Batch01 implements Task {
 			Batch batch01 = Batch.builder().batchid(batch_name).code("000").result("").build();
 			bService.insertBatch(batch01);
 			logger.info("Batch txid:{}", batch01.getTxid());
-        	List <Subscribe> data = service.getSubscribeAll();
+        	List <Subscribe> data = service.getSubscribeAlltoBatch01();
         	int total_user = 0;
         	int subscribe_user = 0;
         	int subscribe_yesterday_user = 0; // 어제 가입한 도수 
@@ -105,7 +107,7 @@ public class Batch01 implements Task {
     						//type : T01 - SK콜센터 취소 , T02 - KT콜센터 취소 , T03 - LGU콜센터 취소
     						category = "T0";
     						Batchlog blog = Batchlog.builder().batch_txid(batch01.getTxid()).type("T01").comment(u.getSpcode() + ":" + u.getMobileno()).actcode("000").build();
-    						logger.info("[] = [{}]CALLCENTER CANCELED : MOBILENO - {}", blog.getType(), u.getSpcode(), u.getMobileno());
+    						logger.info("[{}] = [{}]CALLCENTER CANCELED : MOBILENO - {}", blog.getType(), u.getSpcode(), u.getMobileno());
     						blogService.insertBatchlog(blog); // 배치DB에 남김 
     						service.deleteSubscribeT0(u.getId()); // 삭제처리
     					}
@@ -124,7 +126,7 @@ public class Batch01 implements Task {
 						
 						if ("T0".equals(category)) {
     						Batchlog blog = Batchlog.builder().batch_txid(batch01.getTxid()).type("T01").comment("NARU" + ":" + u.getMobileno()).actcode("000").build();
-    						logger.info("[] = [{}]-RELAYED CANCEL TO NARU : MOBILENO - {}", "T0", u.getSpcode(), u.getMobileno());
+    						logger.info("[{}] = [{}]-RELAYED CANCEL TO NARU : MOBILENO - {}", "T0", u.getSpcode(), u.getMobileno());
 							naru.cancel(u);
 						}
     					
@@ -146,7 +148,7 @@ public class Batch01 implements Task {
         						// actcode : A01 -> 관리자 처리사항
         						//type : U01 - SK 시스템과 싱크가 맞지 않음, 확인 필요 
         						Batchlog blog = Batchlog.builder().batch_txid(batch01.getTxid()).type("T01").comment("NOT SYNC:" + u.getSpcode() + ":" + u.getMobileno()).actcode("A01").build();
-        						logger.info("[] = [{}] SYNC FAULT : MOBILENO - {}", blog.getType(), u.getSpcode(), u.getMobileno());
+        						logger.info("[{}] = [{}] SYNC FAULT : MOBILENO - {}", blog.getType(), u.getSpcode(), u.getMobileno());
         						blogService.insertBatchlog(blog); // 배치DB에 남김
         					}
     						

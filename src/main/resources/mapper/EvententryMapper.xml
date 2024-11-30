@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dsqd.amc.linkedmo.mapper.EvententryMapper">
+<!-- 
+	private int txid;
+	private String eventcd; // : 이벤트코드 (FK : maketings.eventcd)
+	private String ucode; // : 개별이벤트 참가를 위해 만든 것 (이벤트사에서 데이터 제공) - ohvalue 
+	private String status; // : 상태코드 (00 : Entry 기록, 10 : 가입완료, E : 20 : 이벤트참여완료)
+	private String entryip; // : 참여아이피
+	private String mobileno; // : 전화번호
+	private String mappingno; // : 전화번호 매핑코드
+	private String offercode; // : offercode 
+	private String subscribeid; // : 가입번호 (FK : subscribe.id)
+	private Date entrydt; // : 참여시작일시
+	private Date completedt; // : 이벤트종료일시 (이벤트사에 전문발송 기준)
+	private String json; // : 관련내용 JSON 저장 (hash값 저장)
+ -->
+    <resultMap id="ResultMap" type="com.dsqd.amc.linkedmo.model.Evententry">
+        <id column="txid" property="txid" />
+        <result column="eventcd" property="eventcd" />
+        <result column="ucode" property="ucode" />
+        <result column="status" property="status" />
+        <result column="entryip" property="entryip" />
+        <result column="mobileno" property="mobileno" />
+        <result column="mappingno" property="mappingno" />
+        <result column="offercode" property="offercode" />
+        <result column="subscribeid" property="subscribeid" />
+        <result column="entrydt" property="entrydt" />
+        <result column="completedt" property="completedt" />
+        <result column="json" property="json" />
+        <result column="nowstatus" property="nowstatus" />
+    </resultMap>
+<!-- 
+	Evententry getEvententryById(@Param("txid") int txid);
+	List<Evententry> getAllEvententry();
+	List<Evententry> getAllEvententry2();
+	void insertEvententry(Evententry data);
+	void updateEvententry(Evententry data);
+	void deleteEvententry(@Param("txid") int txid);
+ -->
+    
+    <select id="getEvententryById" resultMap="ResultMap">
+        SELECT * FROM evententries WHERE txid=#{txid}
+    </select>
+    
+   <select id="getAllEvententry" resultMap="ResultMap">
+        SELECT * FROM evententries
+    </select>
+    
+   <select id="getAllEvententry2" resultMap="ResultMap">
+        SELECT 
+        	txid, eventcd, ucode, status, entryip, mobileno, mappingno, offercode, subscribeid, completedt, json,
+        	s.nowstatus as nowstatus
+        FROM 
+        	evententries e LEFT OUTER 
+        	JOIN (select id as subscribeid2, status as nowstatus from subscribe) s 
+        	ON e.subscribeid = s.subscribeid2
+    </select>
+
+    <insert id="insertEvententry" parameterType="com.dsqd.amc.linkedmo.model.Evententry" useGeneratedKeys="true" keyProperty="txid">
+        INSERT INTO evententries (eventcd, ucode, status, entryip, mobileno, mappingno, offercode, subscribeid, completedt, json)
+        VALUES (#{eventcd}, #{ucode}, #{status}, #{entryip}, #{mobileno}, #{mappingno}, #{offercode}, #{subscribeid}, #{completedt}, #{json})
+    </insert>
+
+    <update id="updateBatch">
+        UPDATE evententries
+        SET status=#{status},
+            completedt=#{completedt},
+        WHERE txid=#{txid}
+    </update>
+
+    <delete id="deleteBatch">
+        DELETE evententries WHERE txid=#{txid}
+    </delete>
+    
+    <select id="getSubcribeIDByMobileno" parameterType="String" resultType="int">
+        SELECT id FROM subscribe WHERE mobileno=#{mobileno} AND status='A' AND DATEDIFF(NOW(), created_at) &lt; 1
+    </select>
+</mapper>

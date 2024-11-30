@@ -43,6 +43,13 @@ public class EvententryService {
         }
     }
     
+    public List<Evententry> getAllEvententry2() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+        	EvententryMapper mapper = session.getMapper(EvententryMapper.class);
+            return mapper.getAllEvententry2();
+        }
+    }
+    
     public void insertEvententry(Evententry data) {
         try (SqlSession session = sqlSessionFactory.openSession()) {
         	EvententryMapper mapper = session.getMapper(EvententryMapper.class);
@@ -64,6 +71,13 @@ public class EvententryService {
         	EvententryMapper mapper = session.getMapper(EvententryMapper.class);
             mapper.deleteEvententry(txid);
             session.commit();
+        }
+    }
+    
+    public int getSubcribeIDByMobileno(String mobileno) {
+    	try (SqlSession session = sqlSessionFactory.openSession()) {
+        	EvententryMapper mapper = session.getMapper(EvententryMapper.class);
+            return mapper.getSubcribeIDByMobileno(mobileno);
         }
     }
 }

@@ -40,9 +40,9 @@ public class mobiletownSMS {
 	
 	private static final Logger logger = LoggerFactory.getLogger(mobiletownSMS.class);
 	
-	private static final String scheme = "https"; 
-	private static final String hostname = "api.mobiletown.net"; 
-	private static final int port = 9443;
+	private static String scheme = "https"; 
+	private static String hostname = "api.mobiletown.net"; 
+	private static int port = 9443;
 	private static final String contentType = "json";
 	
 	private static String id = "amcapi01";
@@ -74,8 +74,8 @@ public class mobiletownSMS {
 	// 테스트용 
 	public static void main(String[] args) { 
 		mobiletownSMS sms = new mobiletownSMS();
-		//JSONObject json = sms.sendSms("01062235635", sms.setMessage1(genRandoms()));
-		//System.out.println(json.toJSONString());
+		JSONObject json = sms.sendSms("01062235635", sms.setMessage1(genRandoms()));
+		System.out.println(json.toJSONString());
 		System.out.println(sms.setTrKey("01062235635"));
     }
 	

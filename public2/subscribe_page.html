@@ -26,6 +26,12 @@
 				
                 <div class="agree_wrap">
 					<p class="agree_txt02">
+					<!--  
+						<span class="txt" style="color:red; font-weight:bold">
+						- 서비스점검시간 : 2024-11-24 00시~06시<br/>
+						- 점검시간 중 가입 및 해지 서비스를 이용하실 수 없습니다.<br/>
+						</span>
+					-->
 						<span class="txt" style="line-height: 1.4;">
 						- 휴대폰약속번호 서비스는 대표번호와 본인이 등록한 약속번호를 이용하여, 나의 휴대폰번호를 노출시키지 않으면서 안전하게 통화할 수 있는 서비스입니다. <br>
 						- 이용요금은 월 1,650원 (VAT포함)이며, 매월 통신사 요금에 합산되어 청구됩니다.
@@ -548,7 +554,7 @@
                                                 <table class="term_table">
                                                     <tr>
                                                         <th>수탁사</th>
-                                                        <td>- 올마이크레딧㈜ <br> - 나루씨앤씨㈜, ㈜한국클라우드
+                                                        <td>- 올마이크레딧㈜ <br> - 나루씨앤씨㈜
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -717,9 +723,20 @@
         </div>
     </div>
 </body>
-<script
-	src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script type="text/javascript" src="js/popup_subscribe.js?20240829"></script>
+<script	src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript" src="js/event_ohc.js?20241120"></script>
+<script type="text/javascript" src="js/event_buzzvil.js?20241120"></script>
+<script type="text/javascript" src="js/popup_subscribe.js?20241120"></script>
+<script language="javascript">
+function setEventEntry(mobileno) {
+	var offercode = sessionStorage.getItem("offercode");
+	if (offercode == "11") {
+		setOHCEntry(mobileno);
+	} else if (offercode == "12") {
+		setBuzzEntry(mobileno);
+	}
+}
+</script>
 <script language="javascript">
 	$(document).ready(function(){
 		//파라미터를 받아서 참여사코드를 세팅함
@@ -728,20 +745,11 @@
 			$('#offercode').val("00");
 		} else {
 			var offercode = urlParams.get("offercode");
+			if (offercode == "") 
+				offercode="00";
 			$('#offercode').val(offercode);
-			
-			// Ohpoint 마케팅용 세팅
-			var m_id = urlParams.get("m_id");
-			var ohvalue = urlParams.get("ohvalue");
-			if (m_id != "" && ohvalue != "") {
-				sessionStorage.setItem("event", "on");
-				sessionStorage.setItem("m_id", m_id);
-				sessionStorage.setItem("ohvalue", ohvalue);
-			}			
 		}
 		console.log('offercode set [' + $('#offercode').val() + ']');
-		console.log('m_id set sessionStorage [' + sessionStorage.getItem("m_id") + ']');
-		console.log('ohvalue set sessionStorage [' + sessionStorage.getItem("ohvalue") + ']');
 
 		$('#otpNumber').on('input', function() { this.value = this.value.replace(/[^0-9]/g, ''); });
 		$('#phoneNumber').on('input', function() { $('#sendotp').removeClass('disable_btn'); });

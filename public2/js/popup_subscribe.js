@@ -1,3 +1,9 @@
+function closeWindows() {
+	if (confirm("창을 닫을까요?")) {
+		window.open('about:blank', '_self').close();
+	}
+}
+
 $(document).ready(function () {
 
     //반응형 초기화
@@ -14,15 +20,14 @@ $(document).ready(function () {
     $(window).resize(function () {
         winResize();
     });
+	
+	//if (confirm ('현재 서비스 점검 중입니다. \n점검시간: 00시 ~ 06시')) 
+	//return;
     
     function winResize() {
         winH = $(window).innerHeight();
         winW = $(window).innerWidth();
     }
-	
-	function closeWindows() {
-		window.open('about:blank', '_self').close();
-	}
 	
 	function LoadingWithMask() {
 	    // 화면의 높이와 너비를 구합니다.
@@ -58,7 +63,6 @@ $(document).ready(function () {
 	    $('#loadingImg').show();
 	}
 
-
 	function LoadingWithMaskOff() {
 		    $('#mask').hide();
 		    $('#loadingImg').remove();
@@ -68,6 +72,7 @@ $(document).ready(function () {
 	$('#service_join_wrap #sendotp').on('click', function(e){
 		e.stopPropagation();
 		e.preventDefault();
+		
 		let classList = $('#sendotp').attr('class');
 		console.log(classList);
 		if (classList == 'btn-success') {
@@ -265,6 +270,7 @@ $(document).ready(function () {
 	$('.agree_btn').on("click", function(){
 		// 상태체크
 		let steps = $('#steps').val();
+		
 		if (steps != "CONFIRMOTP") {
 			alert("인증번호를 확인 후에 가입을 하셔야해요.");
 			return;
@@ -321,9 +327,9 @@ $(document).ready(function () {
 			checkcode: $('#checkcode').val(),
 		    agree1: $('#agree1').is(':checked'),
 		    agree2: $('#agree2').is(':checked'),
-		    agree3: $('#agree3').is(':checked'),
+		    agree3: $('#agree3').is(':checked')
 		};
-				
+		
 		$.ajax({
             type: 'POST',
             url: '/api/v1.0/subscribe',
@@ -337,8 +343,7 @@ $(document).ready(function () {
 				LoadingWithMaskOff();
 				var data = JSON.parse(response);
                 if (data.code === 200) {
-                    alert('가입이 완료되었습니다.');
-					closeWindows();
+					var ohc = setEventEntry(phoneNumber); // 여기서 closewindow를 함
                     //$('#subscriptionModal').modal('hide');
 				} else if (data.code === 901) {
 					alert('휴대폰약속번호 서비스에 가입이 된 전화번호입니다.[901]');
@@ -359,14 +364,8 @@ $(document).ready(function () {
 				//LoadingWithMaskOff();
             }
         });
-		
-		// 이벤트가 있다면 이벤트 처리
-		var eventon = sessionStorage.getItem("eventon");
-		if (eventon == "on") {
-			console.log("이벤트 ON");
-		}
 		// ===============================
 		
 	});
 
-});//style.js
+});

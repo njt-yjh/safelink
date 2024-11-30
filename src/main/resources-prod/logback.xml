@@ -4,7 +4,7 @@
 	<appender name="STDOUT"
 		class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{yyMMdd HH:mm:ss} %-5level %logger{25} - %msg%n
+			<pattern>%d{yyMMdd HH:mm:ss} %-5level [%thread] %logger{25} - %msg%n
 			</pattern>
 		</encoder>
 	</appender>
@@ -21,7 +21,7 @@
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
 		<encoder>
-			<pattern>%d{yyMMdd HH:mm:ss} %-5level %logger{25} - %msg%n
+			<pattern>%d{yyMMdd HH:mm:ss} %-5level [%thread] %logger{25} - %msg%n
 			</pattern>
 		</encoder>
 	</appender>
@@ -33,10 +33,10 @@
 		<rollingPolicy
 			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> <!-- 매일 새로운 로그 파일 생성 -->
 			<fileNamePattern>logs/batch.%d{yyyy-MM-dd}.log</fileNamePattern> <!-- 30일간의 로그 파일 보관 -->
-			<maxHistory>30</maxHistory>
+			<maxHistory>90</maxHistory>
 		</rollingPolicy>
 		<encoder>
-			<pattern>%d{yyMMdd HH:mm:ss} %-5level %logger{25} - %msg%n
+			<pattern>%d{yyMMdd HH:mm:ss} %-5level [%thread] %logger{25} - %msg%n
 			</pattern>
 		</encoder>
 	</appender>
@@ -50,19 +50,20 @@
 			<maxHistory>90</maxHistory>
 		</rollingPolicy>
 		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{25} - %msg%n
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{25} - %msg%n
 			</pattern>
 		</encoder>
 	</appender>
 
 	<!-- 루트 로거 설정 -->
-	<root level="info">
+	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FILE" />
 	</root>
 
-	<logger name="com.dsqd.amc.linkedmo.util.Batch01" level="info"
+	<logger name="com.dsqd.amc.linkedmo.batch" level="INFO"
 		additivity="false">
+		<appender-ref ref="STDOUT" />
 		<appender-ref ref="BATCHLOG" />
 	</logger>
 	<logger name="org.apache.ibatis" level="error" additivity="false"><appender-ref ref="ERROR" /></logger>

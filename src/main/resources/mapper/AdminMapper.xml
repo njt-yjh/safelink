@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dsqd.amc.linkedmo.mapper.AdminMapper">
+    <select id="getJsonData" resultType="map">
+        SELECT * FROM subscribe
+    </select>
+
+    <insert id="insertJsonData">
+        INSERT INTO subscribe (column1, column2)
+        VALUES (#{jsonData.column1}, #{jsonData.column2})
+    </insert>
+    
+    <select id="summaryNet" resultType="map">
+    	SELECT
+			summarydate, 
+			new_subscribers,
+			cancelled_subscribers,
+			net_increase,
+			--@cumulative_total := @cumulative_total + net_increase 
+		FROM 
+			(
+				SELECT
+				    summarydate,
+				    SUM(new_subscribers) AS new_subscribers,
+				    SUM(cancelled_subscribers) AS cancelled_subscribers,
+				    SUM(new_subscribers) - SUM(cancelled_subscribers) AS net_increase
+				FROM (
+				    SELECT
+				        DATE(created_at) AS summarydate,
+				        COUNT(*) AS new_subscribers,
+				        0 AS cancelled_subscribers
+				    FROM subscribe
+				    GROUP BY DATE(created_at)
+				    UNION ALL
+				    SELECT
+				        DATE(canceled_at) AS summarydate,
+				        0 AS new_subscribers,
+				        COUNT(*) AS cancelled_subscribers
+				    FROM subscribe
+				    WHERE canceled_at IS NOT NULL
+				    GROUP BY DATE(canceled_at)
+				) AS summary_group
+				-- , (SELECT @cumulative_total := 0) AS vars
+				GROUP BY summarydate
+			) as summary
+		ORDER BY summarydate;
+    </select>
+    
+    <select id="summaryOffer" resultType="map">
+		SELECT
+			DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s') AS Report,
+			DATE(s.created_at) AS summarydate,
+			(CASE 
+				WHEN offercode = '00' THEN '홈페이지'
+				WHEN offercode = '11' THEN 'OHC'
+				WHEN offercode = '12' THEN 'Buzzvil'
+				WHEN offercode = '91' THEN 'ARS'
+				ELSE offercode end) as 'offername', 
+		    SUM(CASE WHEN status = 'A' THEN 1 ELSE 0 END) AS 'stayed',
+		    SUM(CASE WHEN status = 'D' THEN 1 ELSE 0 END) AS 'canceled',
+		    SUM(CASE WHEN status IS NULL THEN 1 ELSE 0 END) AS 'na'
+		FROM subscribe s 
+		GROUP BY summarydate, offercode 
+		ORDER BY summarydate DESC, offercode ASC
+    </select>
+    
+    <select id="dashbdToday" resultType="map">
+    SELECT 
+		SUM(PAYEDCNT) AS payedcnt, 
+		SUM(TODAYSUBCNT) AS todaysubcnt, 
+		SUM(TODAYCNLCNT) AS todaycnlcnt
+	FROM
+		(
+		SELECT
+			COUNT(*) AS PAYEDCNT,
+			0 AS TODAYSUBCNT,
+			0 AS TODAYCNLCNT
+		FROM
+			SUBSCRIBE S
+		WHERE
+			STATUS = 'A'
+	UNION ALL
+		SELECT
+			0 AS PAYEDCNT,
+			COUNT(*) AS TODAYSUBCNT,
+			0 AS TODAYCNLCNT
+		FROM
+			SUBSCRIBE S
+		WHERE
+			1=1
+			AND DATE(CREATED_AT) = DATE(NOW())
+	UNION ALL
+		SELECT
+			0 AS PAYEDCNT,
+			0 AS TODAYSUBCNT,
+			COUNT(*) AS TODAYCNLCNT
+		FROM
+			SUBSCRIBE S
+		WHERE
+			STATUS = 'D'
+			AND DATE(CANCELED_AT) = DATE(NOW())
+	) AS TB
+    </select>
+</mapper>
+

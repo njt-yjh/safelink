@@ -159,6 +159,13 @@ $(document).ready(function() {
            		} else { 
            			console.error('AJAX 요청 실패:', error, thrown);
             	}
+            },
+            "complete": function(xhr) {
+	        	const authorizationHeader = xhr.getResponseHeader('Authorization');
+	            if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
+	                const token = authorizationHeader.substring(7); // 'Bearer ' 이후의 문자열 추출
+	                sessionStorage.setItem("token", token);
+	            }
             }
         },
         "columns": [  // 번호 | 수행일시 | 배치모듈 | 수행시간 | 배치결과 | 추가정보(상세내용 | 실행버튼)

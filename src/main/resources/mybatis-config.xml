@@ -23,5 +23,6 @@
 		<mapper resource="mapper/BatchMapper.xml"/>
 		<mapper resource="mapper/BatchlogMapper.xml"/>
 		<mapper resource="mapper/MobiletownMapper.xml"/>
+		<mapper resource="mapper/EvententryMapper.xml"/>
     </mappers>
 </configuration>

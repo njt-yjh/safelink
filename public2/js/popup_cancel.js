@@ -15,13 +15,18 @@ $(document).ready(function () {
         winResize();
     });
     
+	//if (confirm ('현재 서비스 점검 중입니다. \n점검시간: 00시 ~ 06시')) 
+	//return;
+
     function winResize() {
         winH = $(window).innerHeight();
         winW = $(window).innerWidth();
     }
 	
 	function closeWindows() {
-		window.open('about:blank', '_self').close();
+		if (confirm("창을 닫을까요?")) {
+			window.open('about:blank', '_self').close();
+		}
 	}
 	
 	function LoadingWithMask() {
@@ -66,6 +71,7 @@ $(document).ready(function () {
 
 	// 인증번호 발송요청 
 	$('#service_join_wrap #sendotp').on('click', function(e){
+		
 		e.stopPropagation();
 		e.preventDefault();
 		let classList = $('#sendotp').attr('class');
@@ -328,4 +334,4 @@ $(document).ready(function () {
         });
 	});
 
-});//style.js
+});

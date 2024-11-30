@@ -5,6 +5,9 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dsqd.amc.linkedmo.batch.Batch01;
+import com.dsqd.amc.linkedmo.batch.Batch02;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +40,7 @@ public class SchedulerModule {
 
             // Add custom parameters to JobDataMap
             Map<String, Object> params = new HashMap<>();
-            params.put("exampleParam", "exampleValue");
+            params.put("AMC", "Scheduler Setting");
             job.getJobDataMap().put("params", params);
 
             // Add job to the scheduler
@@ -92,12 +95,21 @@ public class SchedulerModule {
             int triggerId = context.getTrigger().getJobDataMap().getInt("triggerId");
 
             // Submit the work to the executor service
-            scheduledFuture = executorService.schedule(() -> work(params, triggerId), 0, TimeUnit.SECONDS);
+            if (triggerId == 1) { 
+            	scheduledFuture = executorService.schedule(() -> work(params, triggerId), 0, TimeUnit.SECONDS); 
+            } else if (triggerId == 2) {  
+            	scheduledFuture = executorService.schedule(() -> pingQuery(params, triggerId), 0, TimeUnit.SECONDS); 
+        	}
         }
     }
 
     public static void work(Map<String, Object> params, int triggerId) {
     	Task task = new Batch01();
+    	task.executeTask(params, triggerId); 
+    }
+    
+    public static void pingQuery(Map<String, Object> params, int triggerId) {
+    	Task task = new Batch02();
     	task.executeTask(params, triggerId); 
     }
 }

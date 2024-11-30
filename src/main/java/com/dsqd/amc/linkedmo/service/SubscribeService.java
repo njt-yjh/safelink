@@ -32,6 +32,14 @@ public class SubscribeService {
             session.commit();
         }
     }
+    
+    public void updateSubscribeStatus(Subscribe data) {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+        	SubscribeMapper mapper = session.getMapper(SubscribeMapper.class);
+            mapper.updateSubscribeStatus(data);
+            session.commit();
+        }
+    }
 
     public Subscribe getSubscribeById(int id) {
         try (SqlSession session = sqlSessionFactory.openSession()) {
@@ -88,6 +96,13 @@ public class SubscribeService {
         	SubscribeMapper mapper = session.getMapper(SubscribeMapper.class);
             mapper.deleteSubscribeT0(id);
             session.commit();
+        }
+    }
+    
+    public List <Subscribe> getSubscribeAlltoBatch01() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+        	SubscribeMapper mapper = session.getMapper(SubscribeMapper.class);
+            return mapper.getSubscribeAlltoBatch01();
         }
     }
 }
