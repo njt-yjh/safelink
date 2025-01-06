@@ -35,8 +35,10 @@ function formatOffercode(code) {
 		return "ARS연계";
 	} else if (code=="00") {
 		return "홈페이지";
-	} else {
+	} else if (code == null || code=="") {
 		return "NaN";
+	} else {
+		return code;
 	}
 }
 

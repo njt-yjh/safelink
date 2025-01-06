@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dsqd.amc.linkedmo.mapper.BlocknumberMapper">
+
+    <resultMap id="ResultMap" type="com.dsqd.amc.linkedmo.model.Blocknumber">
+        <id column="id" property="id" />
+        <result column="spcode" property="spcode" />
+        <result column="status" property="status" />
+        <result column="mobileno" property="mobileno" />
+        <result column="createat" property="createat" />
+        <result column="canceledat" property="canceledat" />
+        <result column="usernameofoper" property="usernameofoper" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <select id="getAllBlocknumber" resultMap="ResultMap">
+        SELECT * FROM blocknumbers
+    </select>
+    
+    <select id="getBlocknumberById" resultMap="ResultMap">
+        SELECT * FROM blocknumbers WHERE id=#{id}
+    </select>
+
+    <select id="getBlocknumberByMobileno" resultMap="ResultMap">
+        SELECT * FROM blocknumbers WHERE mobileno=#{mobileno} and status='A'
+    </select>
+    
+    <select id="getBlocknumberByMobileno2" resultMap="ResultMap">
+        SELECT * FROM blocknumbers WHERE mobileno=#{mobileno}
+    </select>
+    
+    <select id="getBlocknumberByMobilenoSKT" resultMap="ResultMap">
+        SELECT * FROM blocknumbers WHERE mobileno=#{mobileno} AND status='A' AND (spcode='ALL' OR spcode='SKT')  
+    </select>
+    
+    <select id="getBlocknumberByMobilenoKT" resultMap="ResultMap">
+        SELECT * FROM blocknumbers WHERE mobileno=#{mobileno} AND status='A' AND (spcode='ALL' OR spcode='KT')  
+    </select>
+    
+    <select id="getBlocknumberByMobilenoLGU" resultMap="ResultMap">
+        SELECT * FROM blocknumbers WHERE mobileno=#{mobileno} AND status='A' AND (spcode='ALL' OR spcode='LGU')  
+    </select>
+
+    <insert id="insertBlocknumber">
+        INSERT INTO blocknumbers (spcode, mobileno, usernameofoper, remark)
+        VALUES (#{spcode}, #{mobileno}, #{usernameofoper}, #{remark})
+    </insert>
+
+    <update id="updateBlocknumber">
+        UPDATE blocknumbers
+        SET spcode=#{spcode},
+            mobileno=#{mobileno},
+            status=#{mobileno},
+            usernameofoper=#{usernameofoper},
+            remark=#{remark}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteBlocknumber">
+        UPDATE blocknumbers
+        SET status='C',
+       		canceledat=NOW(), 
+        	usernameofoper=#{usernameofoper},
+            remark=#{remark}
+        WHERE id=#{id}
+    </delete>
+
+    <delete id="deleteBlocknumberByMobileno">
+        UPDATE blocknumbers
+        SET status='C',
+       		canceledat=NOW(), 
+        	usernameofoper=#{usernameofoper},
+            remark=#{remark}
+        WHERE mobileno=#{mobileno}
+    </delete>
+
+</mapper>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>휴대폰약속번호 QRTEST</title>
+
+</head>
+<body>
+
+<h1>QRImage</h1>
+QR Contents : <input type=text name=content id=content /> <input type="button" value="적용" onclick="changeQR()"/>
+<img id="qrImage" src='/qr-code?content=1234' alt="QR Code" />
+</body>
+<script>
+	function changeQR() {
+		var txt = document.getElementById('content').value;
+		alert(txt);
+		if (txt == '' || txt == null) txt = 'none-content';
+		var img = document.getElementById('qrImage');
+		img.src = '/qr-code?content=' + encodeURIComponent(txt);
+	}
+</script>
+</html>

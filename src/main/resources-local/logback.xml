@@ -66,7 +66,7 @@
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="BATCHLOG" />
 	</logger>
-	<logger name="org.apache.ibatis" level="error" additivity="false"><appender-ref ref="ERROR" /><appender-ref ref="STDOUT" /></logger>
+	<logger name="org.apache.ibatis" level="debug" additivity="false"><appender-ref ref="ERROR" /><appender-ref ref="STDOUT" /></logger>
 	<logger name="org.quartz" level="error" additivity="false"><appender-ref ref="ERROR" /></logger>
 	<logger name="org.eclipse.jetty" level="error" additivity="false"><appender-ref ref="ERROR" /></logger>
 	<logger name="ch.qos.logback" level="error" additivity="false"><appender-ref ref="ERROR" /></logger>

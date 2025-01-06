@@ -31,6 +31,7 @@ import com.dsqd.amc.linkedmo.controller.DataController;
 import com.dsqd.amc.linkedmo.controller.EventController;
 import com.dsqd.amc.linkedmo.controller.LoginController;
 import com.dsqd.amc.linkedmo.controller.PartnerController;
+import com.dsqd.amc.linkedmo.controller.QRImageController;
 import com.dsqd.amc.linkedmo.controller.SchedulerController;
 import com.dsqd.amc.linkedmo.controller.SubscribeController;
 import com.dsqd.amc.linkedmo.mobiletown.mobiletownSMS;
@@ -187,6 +188,7 @@ public class RestServer {
 		new AdminController();
 		new PartnerController();
 		new EventController();
+		new QRImageController();
 		
 		SchedulerModule.startScheduler();
 		

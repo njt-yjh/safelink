@@ -14,8 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dsqd.amc.linkedmo.mobiletown.SubscribeMobiletown;
+import com.dsqd.amc.linkedmo.model.Blocknumber;
 import com.dsqd.amc.linkedmo.model.Subscribe;
 import com.dsqd.amc.linkedmo.naru.SubscribeNaru;
+import com.dsqd.amc.linkedmo.service.BlocknumberService;
 import com.dsqd.amc.linkedmo.service.SubscribeService;
 import com.dsqd.amc.linkedmo.skt.SubscribeSK;
 import com.dsqd.amc.linkedmo.util.AES256Util;
@@ -281,8 +283,22 @@ public class SubscribeController {
 							
 							JSONObject jsonObject = (JSONObject) JSONValue.parse(req.body());
 							logger.info(jsonObject.toJSONString());
-							
 							String mobileno = jsonObject.getAsString("mobileno");
+							
+							// 가입이 가능한 사용자인지 확인 2024-12-15 =========
+							BlocknumberService bsvc = new BlocknumberService();
+							Blocknumber bn = bsvc.getBlocknumberByMobileno(mobileno);
+							logger.info("Check Block Number : {}", mobileno);
+							
+							if (bn != null) {
+								logger.info("Block Number Found : [{}]", mobileno);
+								code = 933;
+								msg = "가입이 제한된 번호에요. 콜센터로 문의해주세요.";
+								return JSONHelper.assembleResponse(code, msg);
+							}
+							
+							// ===================================================
+							
 							Subscribe data = Subscribe.builder().mobileno(mobileno).build();
 							SubscribeSK skt = new SubscribeSK();
 							JSONObject responseJSON = skt.user(data); // 사용자가 있는지 확인
