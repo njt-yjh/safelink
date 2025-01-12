@@ -11,7 +11,7 @@
 
 <h1>QRImage</h1>
 QR Contents : <input type=text name=content id=content /> <input type="button" value="적용" onclick="changeQR()"/>
-<img id="qrImage" src='/qr-code?content=1234' alt="QR Code" />
+<img id="qrImage" src='/api/v1.0/qr-code?content=1234' alt="QR Code" />
 </body>
 <script>
 	function changeQR() {
@@ -19,7 +19,7 @@ QR Contents : <input type=text name=content id=content /> <input type="button" v
 		alert(txt);
 		if (txt == '' || txt == null) txt = 'none-content';
 		var img = document.getElementById('qrImage');
-		img.src = '/qr-code?content=' + encodeURIComponent(txt);
+		img.src = '/api/v1.0/qr-code?content=' + encodeURIComponent(txt);
 	}
 </script>
 </html>

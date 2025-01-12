@@ -27,7 +27,7 @@ public class QRImageController {
 	}
 
 	private void setupEndpoints() {
-		get("/qr-code", (req, res) -> {
+		get("/api/v1.0/qr-code", (req, res) -> {
             String content = req.queryParams("content");
             res.type("image/png");
             QRImageHelper qr = new QRImageHelper();
