@@ -357,6 +357,18 @@
                 </div>
             </div>
         </div>
+        <!-- 팝업 배경 (오버레이) -->
+        <div class="popup-overlay" id="popup">
+            <div class="popup-content">
+                <span class="close-popup">&times;</span>
+                <img onclick="goToEvent01()" src="images/event01/event01_layer_1.png" class="popup-image" alt="이벤트 이미지">
+                <!-- 하단 버튼 그룹 -->
+                <div class="popup-footer">
+                    <button class="hide-btn">오늘 하루 보지 않기</button>
+                    <button onclick="goToEvent01()" class="close-btn">이벤트 참여하기</button>
+                </div>
+            </div>
+        </div>
 
         <footer id="footer">
             <div class="inner">
@@ -450,5 +462,76 @@ function LoadingWithMaskOff() {
 	    $('#loadingImg').remove();
 }
 
+// 설정된 날짜 이후에는 팝업을 표시하지 않도록 하는 기능
+const popupEndDate = new Date("2025-02-28T23:59:59");
+
+const popup = document.getElementById("popup");
+const closeBtns = document.querySelectorAll(".close-popup");
+const hideBtn = document.querySelector(".hide-btn");
+
+// 쿠키 설정 함수
+function setCookie(name, value, days) {
+    let date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+}
+
+// 쿠키 가져오기 함수
+function getCookie(name) {
+    let cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i].trim();
+        if (cookie.startsWith(name + '=')) {
+            return cookie.substring(name.length + 1);
+        }
+    }
+    return null;
+}
+
+// 팝업 닫기 (X 버튼 및 닫기 버튼)
+closeBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        popup.style.display = "none";
+    });
+});
+
+// "오늘 하루 보지 않기" 버튼 클릭 시
+hideBtn.addEventListener("click", () => {
+    setCookie("hidePopup", "true", 1); // 1일 동안 팝업 숨김
+    popup.style.display = "none";
+});
+
+// 현재 날짜 가져오기
+function isPopupExpired() {
+    let today = new Date();
+    return today > popupEndDate; // 오늘 날짜가 종료 날짜를 지나면 true 반환
+}
+
+// 팝업 표시 조건 확인
+function checkPopupDisplay() {
+    if (isPopupExpired()) {
+        return;
+    }
+
+    if (!getCookie("hidePopup")) { // 쿠키가 없고, 날짜 조건이 맞으면 팝업 표시
+        popup.style.display = "flex";
+    }
+}
+
+// 페이지 로드 시 쿠키 확인하여 팝업 표시 여부 결정
+window.onload = () => {
+    checkPopupDisplay();
+};
+
+// 배경 클릭 시 팝업 닫기
+popup.addEventListener("click", (e) => {
+    if (e.target === popup) {
+        popup.style.display = "none";
+    }
+});
+
+function goToEvent01() {
+    location.href="./event01.html";
+}
 </script>
 </html>
