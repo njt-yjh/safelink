@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
     <title>휴대폰약속번호</title>
     <!-- Google tag (gtag.js) -->
@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/index_qr.css">
 </head>
 <body>
     <div id="wrap">
@@ -84,7 +85,11 @@
                     <span>Mobile Phone Secret Number<b>.</b></span>
                     <strong>휴대폰 <b>약속번호</b></strong>
                     <p>본인의 휴대폰번호를 노출하지 않으면서 <br><b>약속된 연결번호</b>로 연락해보세요.</p>
-                    <a href="javascript:void(0);" onclick="showPopup();">가입하기</a>
+                    <div style="display: flex;">
+                        <a style="margin-right: 10px;" href="javascript:void(0);" onclick="showPopup();">가입하기</a>
+                        <a id="copy-btn" style="margin-right: 10px;display: none;width: 65%;" href="javascript:void(0);" onclick="qrPopup('copy');">약속번호 복사하기</a>
+                        <a id="qr-btn" style="display: none;width: 50%;" href="javascript:void(0);" onclick="qrPopup('download');">QR 다운로드</a>
+                    </div>
                 </div>
             </div>
 
@@ -369,6 +374,60 @@
                 </div>
             </div>
         </div>
+        <!-- 레이어 팝업 (오버레이) -->
+        <div class="overlay" id="popupOverlay" style="flex-direction: column;">
+            <div class="popup" id="qrPopup">
+                <button class="close-btn" id="closeBtn">&times;</button>
+                <div class="popup-header">약속번호 확인하기</div>
+                <hr class="qr-line">
+                <!-- 휴대폰 번호 입력 영역 -->
+                <div class="phone-input-wrap">
+                    <input type="text" id="phoneNumber" placeholder="휴대폰 번호 입력" />
+                    <button style="height: 46px;width: 73px;" id="confirmBtn">확인</button>
+                </div>
+                <div style="font-size: 11pt;font-weight: 400;color: #8C8C8C;line-height: normal;margin-bottom: 24px;">
+                    * 최초에 부여받은 연결 번호를 변경하지 않은 상태에서 휴대폰 번호를 입력하시게 되면, 휴대폰 번호가 노출될 수 있습니다.
+                    (처음 가입 시 휴대폰 번호 뒷 8자리로 자동 설정되는 방식) 설정 방법은 메인 하단에서 확인하실 수 있습니다.
+                </div>
+                <hr class="qr-line">
+                <!-- QR 코드 표시 영역 -->
+                <div class="qr-code-area" id="qrCodeArea">
+                    <div style="font-size: 16pt;font-weight: bold;color: #323232;text-align: -webkit-left;">
+                        QR 생성하기
+                    </div>
+                    <!-- 실제 QR 코드가 들어갈 div -->
+                    <div id="qrCode"></div>
+                    <!-- 예시로 QR 하단에 표시할 텍스트(약속번호 등) -->
+                    <div id="qrInfoText"></div>
+                </div>
+
+                <!-- 약속번호 복사 영역 -->
+                <div class="copy-code-area" id="copyCodeArea">
+                    <div style="font-size: 16pt;font-weight: bold;color: #323232;text-align: -webkit-left;">
+                        약속번호 복사하기
+                    </div>
+                    <div class="copyInfoDiv">
+                        <div>
+                            <span id="copyText"></span>
+                        </div>
+                        <div>
+                            <img id="copyTextBtn" data-clipboard-text="" style="width: 55px;float: right;" src="images/button.png" alt="복사">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div style="text-align:-webkit-center">
+                    <!-- QR 다운로드 버튼 -->
+                    <button style="align-items: center;" class="qr-download-btn" id="qrDownloadBtn">QR 다운로드</button>
+                </div>
+
+            </div>
+            <!-- 다운로드 완료 메시지 -->
+            <div class="success-popup" id="successPopup">
+                QR 다운로드가 완료되었습니다
+            </div>
+        </div>
 
         <footer id="footer">
             <div class="inner">
@@ -379,7 +438,7 @@
                 <div class="info_wrap">
                     <div class="info_txt">
                         <p>
-                        	<span>올마이크레딧 (AllMyCredit) | 사업자등록번호 : 351-87-01801</span>
+                        	<span>올마이크레딧 (AllMyCredit) | 사업자등록번호 : 351-87-01801 | 통신판매업 신고번호 : 제 2025-서울송파-0690 호</span>
                         </p>
                         <p>
                             <span>서울특별시 송파구 법원로 9길 26 3층 318호 RA385 | 대표자 박찬홍</span>
@@ -396,14 +455,36 @@
 </body>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script> 
+<script src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script type="text/javascript" src="js/main.js"></script>
 <script type="text/javascript" src="js/responsive-accordion.min.js"></script>
-    
+<script type="text/javascript" src="js/index_qr.js"></script>
+<script type="text/javascript" src="js/clipboard.min.js"></script>
+
 <script language="javascript">
 $(document).ready(function(){
 	// LoadingWithMask();
+    $('#phoneNumber').on('input', function() { this.value = this.value.replace(/[^0-9]/g, ''); });
+
+    function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    if (isMobileDevice()) {
+        console.log("모바일 기기입니다.");
+        document.getElementById('copy-btn').style.display='';
+        document.getElementById('qr-btn').style.display='';
+
+    }
+});
+
+const clipboard = new ClipboardJS('#copyTextBtn');
+clipboard.on('success', function(e){
+    console.log("success");
+    e.clearSelection();
+    showSuccessPopup();
 });
 
 function showPopup_notice() { 
@@ -463,7 +544,7 @@ function LoadingWithMaskOff() {
 }
 
 // 설정된 날짜 이후에는 팝업을 표시하지 않도록 하는 기능
-const popupEndDate = new Date("2025-02-28T23:59:59");
+const popupEndDate = new Date("2025-03-26T23:59:59");
 
 const popup = document.getElementById("popup");
 const closeBtns = document.querySelectorAll(".close-popup");
@@ -532,6 +613,17 @@ popup.addEventListener("click", (e) => {
 
 function goToEvent01() {
     location.href="./event01.html";
+}
+
+/* QR 기능*/
+function qrPopup(type) {
+    const qrPopup = document.getElementById("popupOverlay");
+    qrPopup.style.display = 'flex';
+    if(type === 'copy') {
+        qrType = 'copy';
+    } else {
+        qrType = 'download';
+    }
 }
 </script>
 </html>

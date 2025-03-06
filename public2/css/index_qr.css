@@ -1,0 +1,216 @@
+/* ===== 팝업 열기 버튼 ===== */
+.open-popup-btn {
+    margin: 20px;
+    padding: 10px 20px;
+    background-color: #3498db;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+/* ===== 레이어 팝업 오버레이 ===== */
+.overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none; /* 기본적으로 숨김 */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* ===== 팝업 컨테이너 ===== */
+.popup {
+    background: #fff;
+    width: 300px;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+}
+
+/* ===== 팝업 헤더(타이틀 등) ===== */
+.popup-header {
+    font-weight: bold;
+    margin-bottom: 18px;
+    font-size: 19pt;
+    color: #13161C;
+}
+
+/* ===== 닫기 버튼 ===== */
+#closeBtn {
+    position: absolute;
+    top: 24px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    display: none;
+}
+
+/* ===== 휴대폰 번호 입력영역 ===== */
+.phone-input-wrap {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.phone-input-wrap input {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #dddddd;
+    border-radius: 6px;
+    font-weight: 500;
+    color: #000000;
+}
+
+.phone-input-wrap input::placeholder {
+    color: #B4B4B4;
+}
+
+.phone-input-wrap input::-webkit-input-placeholder{
+    color: #B4B4B4;
+}
+
+.phone-input-wrap input:-ms-input-placeholder{
+    color: #B4B4B4;
+}
+
+.phone-input-wrap button {
+    padding: 6px 10px;
+    background-color: #3B3B3B;
+    border: none;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* ===== QR 생성하기 버튼 ===== */
+.qr-generate-btn {
+    margin: 10px 0;
+    padding: 8px;
+    width: 100%;
+    background-color: #9b59b6;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    display: none; /* 확인 후 보이도록 */
+}
+
+/* ===== QR 코드 영역 ===== */
+.qr-code-area {
+    margin: 10px 0;
+    text-align: center;
+    display: none; /* QR 생성 버튼 클릭 후 보이도록 */
+}
+
+/* ===== QR 다운로드 버튼 ===== */
+.qr-download-btn {
+    margin: 24px 0 40px 0;
+    padding: 8px;
+    width: 145px;
+    height: 46px;
+    background-color: #6C3AE9;
+    border: none;
+    color: #FFFFFF;
+    border-radius: 12px;
+    font-size: 14pt;
+    font-weight: 600;
+    display: none; /* QR 생성 후 보이도록 */
+}
+
+/* ===== 다운로드 완료 메시지 ===== */
+.download-complete-msg {
+    margin-top: 10px;
+    color: #27ae60;
+    font-weight: bold;
+    display: none;
+    text-align: center;
+}
+/* 하단에 위치하는 간단한 토스트/레이어 팝업 예시 */
+.success-popup {
+    /*position: fixed;*/
+    /*bottom: 10%;*/
+    /*left: 50%;*/
+    /*transform: translateX(-50%);*/
+    background: #000000;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 18pt;
+    font-weight: 500;
+    align-content: center;
+    height: 53px;
+    /*display: none;*/ /* 기본 숨김 */
+    /* fade 효과를 위해 display 대신 opacity와 visibility 사용 */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+
+    z-index: 99999; /* 다른 요소 위에 표시되도록 충분히 큰 값 */
+    /*box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);*/
+}
+
+.success-popup.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+#qrCode {
+    text-align: -webkit-center;
+    margin-top: 12px;
+    margin-bottom: 9px;
+}
+
+#qrInfoText {
+    font-size: 20pt;
+    font-weight: 600;
+    color: #323232;
+}
+
+.copy-code-area {
+    margin: 10px 0;
+    display: none;
+}
+
+.copyInfoDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 12px 0 20px 0;
+    font-size: 16pt;
+    font-weight: 600;
+    color: #323232;
+    gap: 8px;
+    background: #EFEDF3;
+    height: 57px;
+    border-radius: 8px;
+}
+
+.qr-line {
+    border: 1px solid #eeeeee;
+    margin-bottom: 24px;
+}
+/* 반응형 (모바일) 조정 */
+@media (max-width: 768px) {
+    /* 팝업 너비 및 패딩 조정 */
+    .popup {
+        width: 80%;
+        padding: 20px;
+    }
+
+    /* 버튼 및 입력 폰트 크기 조정 */
+    button, .phone-input-wrap input {
+        font-size: 18px;
+    }
+
+    /* 성공 메시지 레이어 (토스트) 너비 조정 */
+    .success-popup {
+        width: 80%;
+        padding: 8px 16px;
+        font-size: 18pt;
+        margin-top: 16px;
+    }
+}
