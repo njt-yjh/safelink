@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dsqd.amc.linkedmo.mapper.MobiliansAutoMapper">
+
+    <resultMap id="ResultMap" type="com.dsqd.amc.linkedmo.model.MobiliansAuto">
+        <id column="mobiliansphone_auto_id" property="mobiliansphoneAutoId" />
+        <result column="rtn_resultcd" property="rtn_Resultcd" />
+        <result column="rtn_resultmsg" property="rtn_Resultmsg" />
+        <result column="rtn_actdate" property="rtn_Actdate" />
+        <result column="rtn_autobillkey" property="rtn_Autobillkey" />
+        <result column="rtn_commid" property="rtn_Commid" />
+        <result column="rtn_emailflag" property="rtn_Emailflag" />
+        <result column="rtn_mobilid" property="rtn_Mobilid" />
+        <result column="rtn_mode" property="rtn_Mode" />
+        <result column="rtn_prdtprice" property="rtn_Prdtprice" />
+        <result column="rtn_recordkey" property="rtn_Recordkey" />
+        <result column="rtn_remainamt" property="rtn_Remainamt" />
+        <result column="rtn_svcid" property="rtn_Svcid" />
+        <result column="rtn_tradeid" property="rtn_Tradeid" />
+        <result column="rtn_payeremail" property="rtn_Payeremail" />
+        <result column="rtn_no" property="rtn_No" />
+        <result column="rtn_prdtnm" property="rtn_Prdtnm" />
+    </resultMap>
+
+    <insert id="insertAuto">
+        INSERT INTO mobiliansphone_auto(rtn_resultcd,rtn_resultmsg,rtn_actdate,rtn_autobillkey,rtn_commid,rtn_emailflag,rtn_mobilid,rtn_mode,rtn_prdtprice,rtn_recordkey,rtn_remainamt,rtn_svcid,rtn_tradeid,rtn_payeremail,rtn_no,rtn_prdtnm)
+        VALUES (#{rtn_Resultcd},#{rtn_Resultmsg},#{rtn_Actdate},#{rtn_Autobillkey},#{rtn_Commid},#{rtn_Emailflag},#{rtn_Mobilid},#{rtn_Mode},#{rtn_Prdtprice},#{rtn_Recordkey},#{rtn_Remainamt},#{rtn_Svcid},#{rtn_Tradeid},#{rtn_Payeremail},#{rtn_No},#{rtn_Prdtnm})
+    </insert>
+
+    <select id="getAutobillKey" resultMap="ResultMap">
+        SELECT * FROM mobiliansphone_auto WHERE rtn_autobillkey = #{autobillkey} ORDER BY rtn_actdate DESC LIMIT 1
+    </select>
+
+</mapper>

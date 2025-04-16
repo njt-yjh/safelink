@@ -97,6 +97,7 @@
 	    SELECT * FROM subscribe 
 		WHERE 1=1
 			AND DATE(NOW()) > DATE(created_at)
+            AND spcode = 'SKT'
 		ORDER BY 
 			created_at ASC; 
     </select>   

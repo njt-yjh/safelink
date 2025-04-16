@@ -199,6 +199,11 @@ $(document).ready(function () {
 						$('#steps').val("CONFIRMOTP");
 			            $('#checkotp').addClass("disable_btn");
 						$('#checkcode').val(data.checkcode);
+						// PG결제 설정
+						$('#MC_No').val(phoneNumber);
+						$('input[name=Tradeid]').val(phoneNumber+new Date().getTime());
+						$('#MC_DEFAULTCOMMID').val($('#spcode').val());
+						$('#MC_FIXCOMMID').val($('#spcode').val());
 					} else {
 						if (data.code === 901) {
 							alert('휴대폰약속번호 서비스에 가입이 된 전화번호입니다.[901]');
@@ -245,6 +250,11 @@ $(document).ready(function () {
 		
 		$('#spcode').val($(this).attr('id'));
 		console.log($('#spcode').val());
+		if($(this).attr('id') !== "SKT") {
+			$(".pay_wrap").css("display", "flex");
+		} else {
+			$(".pay_wrap").css("display", "none");
+		}
    });
 
 
@@ -319,6 +329,8 @@ $(document).ready(function () {
             }
             return;
         }
+
+		$('input[name=MSTR]').val("offercode="+$('#offercode').val()+"|agree1="+$('#agree1').is(':checked')+"|agree2="+$('#agree2').is(':checked')+"|agree3="+$('#agree3').is(':checked') + "|spcode="+$('#spcode').val()+"|bz_tracking_id="+sessionStorage.getItem("bz_tracking_id")+"|bz_checkcode="+$('#checkcode').val()+"|ohvalue="+sessionStorage.getItem("ohvalue")+"|m_id="+sessionStorage.getItem("m_id"));
 				
 		var formData = {
 		    spcode: $('#spcode').val(),
@@ -329,43 +341,97 @@ $(document).ready(function () {
 		    agree2: $('#agree2').is(':checked'),
 		    agree3: $('#agree3').is(':checked')
 		};
-		
-		$.ajax({
-            type: 'POST',
-            url: '/api/v1.0/subscribe',
-            data: JSON.stringify(formData),
-            contentType: 'application/json',
-			caches: false, 
-			beforeSend: function () {
-			        LoadingWithMask(); // 요청 전 로딩 표시
-			},
-            success: function (response) {
-				LoadingWithMaskOff();
-				var data = JSON.parse(response);
-                if (data.code === 200) {
-					var ohc = setEventEntry(phoneNumber); // 여기서 closewindow를 함
-                    //$('#subscriptionModal').modal('hide');
-				} else if (data.code === 901) {
-					alert('휴대폰약속번호 서비스에 가입이 된 전화번호입니다.[901]');
-				} else if (data.code === 912) {
-					alert('통신사에 가입되지 않은 전화번호입니다.[912]');
-				} else if (data.code === 923) {
-					alert('휴대폰약속번호 서비스에 가입이 불가한 전화번호입니다.[923]');
-                } else {
-                    alert(data.msg);
-                }
-            },
-			error: function (xhr, status, error) {
-			    LoadingWithMaskOff(); // 에러 발생 시 로딩 해제
-			    alert('휴대폰약속번호 서비스 가입이 원활하지 않네요. 잠시 후 다시 해주세요.[9F5]');
-			},
-            complete: function () {
-                //hideLoading();
-				//LoadingWithMaskOff();
-            }
-        });
+		// PG결제 분기 처리 2025.02.10 양세용
+		if($('#spcode').val() !== 'SKT') {
+			if($('#payGbn').val() === 'phone') {
+				$.ajax({
+					type: 'POST',
+					url: '/api/v1.0/mobilians/precheck',
+					data: JSON.stringify(formData),
+					contentType: 'application/json',
+					caches: false,
+					beforeSend: function () {
+						LoadingWithMask(); // 요청 전 로딩 표시
+					},
+					success: function (response) {
+						LoadingWithMaskOff();
+						var data = JSON.parse(response);
+						if (data.code === 200) {
+							payRequest();
+						} else if (data.code === 901) {
+							alert('휴대폰약속번호 서비스에 가입이 된 전화번호입니다.[901]');
+						} else if (data.code === 912) {
+							alert('통신사에 가입되지 않은 전화번호입니다.[912]');
+						} else if (data.code === 923) {
+							alert('휴대폰약속번호 서비스에 가입이 불가한 전화번호입니다.[923]');
+						} else if(data.code === 902){
+							alert('입력하신 전화번호는 해지관련 전산처리 중으로 내일 가입이 가능합니다.[902]');
+						} else {
+
+						}
+					},
+					error: function (xhr, status, error) {
+						LoadingWithMaskOff(); // 에러 발생 시 로딩 해제
+						alert('휴대폰약속번호 서비스 가입이 원활하지 않네요. 잠시 후 다시 해주세요.[9F5]');
+					},
+					complete: function () {
+						//hideLoading();
+						//LoadingWithMaskOff();
+					}
+				});
+			} else {
+				//payRequestCN();
+			}
+		} else {
+			$.ajax({
+				type: 'POST',
+				url: '/api/v1.0/subscribe',
+				data: JSON.stringify(formData),
+				contentType: 'application/json',
+				caches: false,
+				beforeSend: function () {
+					LoadingWithMask(); // 요청 전 로딩 표시
+				},
+				success: function (response) {
+					LoadingWithMaskOff();
+					var data = JSON.parse(response);
+					if (data.code === 200) {
+						var ohc = setEventEntry(phoneNumber); // 여기서 closewindow를 함
+						//$('#subscriptionModal').modal('hide');
+					} else if (data.code === 901) {
+						alert('휴대폰약속번호 서비스에 가입이 된 전화번호입니다.[901]');
+					} else if (data.code === 912) {
+						alert('통신사에 가입되지 않은 전화번호입니다.[912]');
+					} else if (data.code === 923) {
+						alert('휴대폰약속번호 서비스에 가입이 불가한 전화번호입니다.[923]');
+					} else {
+						alert(data.msg);
+					}
+				},
+				error: function (xhr, status, error) {
+					LoadingWithMaskOff(); // 에러 발생 시 로딩 해제
+					alert('휴대폰약속번호 서비스 가입이 원활하지 않네요. 잠시 후 다시 해주세요.[9F5]');
+				},
+				complete: function () {
+					//hideLoading();
+					//LoadingWithMaskOff();
+				}
+			});
+		}
 		// ===============================
 		
 	});
+
+	/*$(".phone_img").on("click", function () {
+		$("#payGbn").val("phone");
+		$(".card_img").attr("src", "images/card_off.png");
+		$(this).attr("src", "images/phone_on.png");
+	});
+
+	$(".card_img").on("click", function () {
+		$("#payGbn").val("card");
+		$(".phone_img").attr("src", "images/phone_off.png");
+		$(this).attr("src", "images/card_on.png");
+	});*/
 
 });

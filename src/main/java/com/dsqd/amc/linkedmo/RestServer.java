@@ -9,14 +9,25 @@ import static spark.Spark.staticFiles;
 import static spark.Spark.stop;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
+import com.dsqd.amc.linkedmo.model.Mobilians;
+import com.dsqd.amc.linkedmo.service.CouponService;
+import com.dsqd.amc.linkedmo.service.MobiliansService;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.ibatis.io.Resources;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,9 +94,10 @@ public class RestServer {
 
         if ("local".equals(env)) {
 //		staticFiles.externalLocation("/Users/eunjun/Documents/dsqf/AMCProject/public2"); // Static files
-        	staticFiles.externalLocation("C:\\Users\\silve\\git\\safelink\\public2"); // Static files
+        	//staticFiles.externalLocation("C:\\Users\\silve\\git\\safelink\\public2"); // Static files
+			staticFiles.externalLocation("C:\\Yang\\99.project\\01.workspace\\safelink_git\\public2"); // Static files YangSeyong
         }
-        
+
         GlobalCache cache = GlobalCache.getInstance();
         Properties properties = new Properties();
         try {
@@ -99,7 +111,7 @@ public class RestServer {
         
 		int port = 5000;
 		port(port);
-		
+
 		before((request, response) -> {
             String path = request.pathInfo();
             String clientIP = request.ip();
@@ -170,6 +182,11 @@ public class RestServer {
 		get("/api/v2.0/test/sms/change/:mobileno", (req, res) -> changeTestmobileno(req, res));
 		get("/api/v2.0/test/sms/:mobileno", (req, res) -> mobiletown(req, res));
 		get("/api/v2.0/test/sms/:mobileno/:rnumber", (req, res) -> mobiletownOtp(req, res));
+		//개발 테스트 - 양세용
+		get("/api/v2.0/test/coupon", (req, res) -> couponRequest(req));
+		get("/api/v2.0/test/testCoupon", (req, res) -> couponRequestTest(req));
+		get("/api/v2.0/test/mobiliansAuto", (req, res) -> mobiliansAuto());
+		get("/api/v2.0/test/pgCancel", (req, res) -> pgCancel());
 
 		try {
 			String encdata = AES256Util.encrypt("safelinkd&07", "12345678901234567890123456789012");
@@ -470,6 +487,152 @@ public class RestServer {
 		dc.batch();
 		return "OK";
 	}
-	
-	
+
+	private static String couponRequest(Request req) {
+		CouponService couponService = new CouponService();
+		//couponService.sendCouponRequest();
+
+		LocalDate today = LocalDate.now();
+		HashMap<String,Object> params = new HashMap<>();
+
+		Properties properties = new Properties();
+		try {
+			properties.load(Resources.getResourceAsStream("application.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			// POST 요청을 보낼 URL 설정
+			HttpPost httpPost = new HttpPost(properties.getProperty("coupon.server"));
+
+			String mobileNumber = req.queryParams("mobileNumber");
+			// 전송할 파라미터 설정 (x-www-form-urlencoded 형식)
+			List<NameValuePair> requestParams = new ArrayList<>();
+			requestParams.add(new BasicNameValuePair("ACTION", "CI102_ISSUECPN_TITLE_WITHPAY"));
+			requestParams.add(new BasicNameValuePair("COOPER_ID", properties.getProperty("coupon.cooperid")));
+			requestParams.add(new BasicNameValuePair("COOPER_PW", properties.getProperty("coupon.cooperpw")));
+			requestParams.add(new BasicNameValuePair("SITE_ID", properties.getProperty("coupon.siteid")));
+			requestParams.add(new BasicNameValuePair("NO_REQ", properties.getProperty("coupon.noreq")));
+			requestParams.add(new BasicNameValuePair("COOPER_ORDER", mobileNumber+new Date().getTime()));
+			requestParams.add(new BasicNameValuePair("ISSUE_COUNT", "1"));
+			requestParams.add(new BasicNameValuePair("CALL_CTN", properties.getProperty("coupon.callctn")));
+			requestParams.add(new BasicNameValuePair("RCV_CTN", mobileNumber));
+			requestParams.add(new BasicNameValuePair("SEND_MSG", "휴대폰약속번호 서비스 신규가입 이벤트"));
+			requestParams.add(new BasicNameValuePair("VALID_START", today.format(DateTimeFormatter.ofPattern("yyyyMMdd"))));
+			requestParams.add(new BasicNameValuePair("VALID_END", today.plusMonths(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"))));
+			requestParams.add(new BasicNameValuePair("PAY_ID","1"));
+			requestParams.add(new BasicNameValuePair("BOOKING_NO","1"));
+			requestParams.add(new BasicNameValuePair("SITE_URL","1"));
+			requestParams.add(new BasicNameValuePair("TITLE","[휴대폰약속번호 서비스 신규가입 이벤트]"));
+
+			for (NameValuePair pair : requestParams) {
+				// 동일한 키가 여러 번 등장하면 마지막 값이 저장됩니다.
+				params.put(pair.getName(), pair.getValue());
+			}
+
+			// 모바일 쿠폰 발송 API 요청 파라미터 저장
+			couponService.insertCouponRequest(params);
+
+			// 파라미터를 UrlEncodedFormEntity로 인코딩 (UTF-8)
+			httpPost.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+
+			// POST 요청 실행 및 응답 받기
+			try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+				// 응답 상태 코드 출력
+				System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
+
+				// 응답 본문 처리
+				HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					String responseBody = EntityUtils.toString(entity, "UTF-8");
+					couponService.insertCouponResponse(couponService.xmlParse(responseBody));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "";
+	}
+
+	private static String couponRequestTest(Request req) {
+		CouponService couponService = new CouponService();
+		//couponService.sendCouponRequest();
+
+		LocalDate today = LocalDate.now();
+		HashMap<String,Object> params = new HashMap<>();
+
+		Properties properties = new Properties();
+		try {
+			properties.load(Resources.getResourceAsStream("application.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			// POST 요청을 보낼 URL 설정
+			HttpPost httpPost = new HttpPost("https://stg-atom.donutbook.co.kr/b2ccoupon/b2cService.aspx");
+
+			String mobileNumber = req.queryParams("mobileNumber");
+			// 전송할 파라미터 설정 (x-www-form-urlencoded 형식)
+			List<NameValuePair> requestParams = new ArrayList<>();
+			requestParams.add(new BasicNameValuePair("ACTION", "CC02_DOWN_SINGLE_GOODSINFO"));
+			requestParams.add(new BasicNameValuePair("COOPER_ID", "SC2319"));
+			requestParams.add(new BasicNameValuePair("COOPER_PW", "ogxg79!@"));
+			requestParams.add(new BasicNameValuePair("SITE_ID", "10003466"));
+			requestParams.add(new BasicNameValuePair("NO_REQ", "999999"));
+
+			for (NameValuePair pair : requestParams) {
+				// 동일한 키가 여러 번 등장하면 마지막 값이 저장됩니다.
+				params.put(pair.getName(), pair.getValue());
+			}
+
+			// 모바일 쿠폰 발송 API 요청 파라미터 저장
+			//couponService.insertCouponRequest(params);
+
+			// 파라미터를 UrlEncodedFormEntity로 인코딩 (UTF-8)
+			httpPost.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+
+			// POST 요청 실행 및 응답 받기
+			try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+				// 응답 상태 코드 출력
+				System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
+
+				// 응답 본문 처리
+				HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					String responseBody = EntityUtils.toString(entity, "UTF-8");
+					System.out.println(responseBody);
+					//couponService.xmlParse(responseBody);
+					//couponService.insertCouponResponse(couponService.xmlParse(responseBody));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "";
+	}
+
+	private static String mobiliansAuto() {
+		MobiliansService mobiliansService = new MobiliansService();
+		mobiliansService.autoPayBatch();
+		return "";
+	}
+
+	private static String pgCancel() {
+		MobiliansService mobiliansService = new MobiliansService();
+		Mobilians m = new Mobilians();
+		/*m.setUserkey("uk1076500250317");
+		m.setAutobillkey("bk2091079250317");
+		m.setMrchid("24110815");
+		m.setSvcid("241108151152");
+		m.setTradeid("010308334801742176369559");
+		m.setSigndate("20250317105449");
+		m.setMobilid("3049701902");
+
+		mobiliansService.cancel(m);*/
+		return "";
+	}
 }

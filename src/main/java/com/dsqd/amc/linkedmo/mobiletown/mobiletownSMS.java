@@ -97,7 +97,7 @@ public class mobiletownSMS {
 		if ("91".equals(offercode)) {
 			return "휴대폰약속번호 신청 하시겠습니까?\n\n"+subscribe_url_bitly_91;
 		} else {
-			return "휴대폰약속번호 신청 하시겠습니까?\n\nhttps://linksafe.kr/subscribe_page.html?spcode="+offercode;
+			return "휴대폰약속번호 신청 하시겠습니까?\n\nhttps://linksafe.kr/subscribe.html";
 		}
 	}
 	

@@ -25,5 +25,8 @@
 		<mapper resource="mapper/EvententryMapper.xml"/>
 		<mapper resource="mapper/AdminMapper.xml"/>
 		<mapper resource="mapper/BlocknumberMapper.xml"/>
+		<mapper resource="mapper/MobiliansMapper.xml"/>
+		<mapper resource="mapper/MobiliansAutoMapper.xml"/>
+		<mapper resource="mapper/CouponMapper.xml"/>
     </mappers>
 </configuration>

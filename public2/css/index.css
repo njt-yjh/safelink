@@ -365,3 +365,15 @@ span.dot_txt01:before{position: absolute; width:4px; height:4px; background:#fff
     from { opacity: 0; transform: scale(0.9); }
     to { opacity: 1; transform: scale(1); }
 }
+
+/* PG 결제 */
+.pay_wrap {
+    display: none;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.pay_wrap img {
+    width: 45%;
+    cursor: pointer;
+}

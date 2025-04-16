@@ -103,6 +103,23 @@
 			<artifactId>javase</artifactId> 
 			<version>3.4.1</version> 
 		</dependency>
+		<dependency>
+			<groupId>mobilians</groupId>
+			<artifactId>mobilians</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20240303</version>
+		</dependency>
+		<dependency>
+			<groupId>mobilians</groupId>
+			<artifactId>mobilians-cancel</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 
 	</dependencies>
 	<profiles>
@@ -114,6 +131,8 @@
 			</activation>
 			<properties>
 				<environment>local</environment>
+				<maven.compiler.source>17</maven.compiler.source>
+				<maven.compiler.target>17</maven.compiler.target>
 			</properties>
 		</profile>
 		<!-- dev: 개발 -->
@@ -121,6 +140,8 @@
 			<id>dev</id>
 			<properties>
 				<environment>dev</environment>
+				<maven.compiler.source>17</maven.compiler.source>
+				<maven.compiler.target>17</maven.compiler.target>
 			</properties>
 		</profile>
 		<!-- prd: 운영 -->
@@ -128,6 +149,8 @@
 			<id>prod</id>
 			<properties>
 				<environment>prod</environment>
+				<maven.compiler.source>17</maven.compiler.source>
+				<maven.compiler.target>17</maven.compiler.target>
 			</properties>
 		</profile>
 	</profiles>

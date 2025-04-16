@@ -32,6 +32,7 @@
 				<input type="hidden" name="offercode" id="offercode" value="00" />
 				<input type="hidden" name="steps" id="steps" value="" />
 				<input type="hidden" name="checkcode" id="checkcode" value="" />
+				<input type="hidden" name="payGbn" id="payGbn" value="phone" />
 
 				<div class="agree_wrap">
 					<p class="agree_txt02">
@@ -43,8 +44,8 @@
 					<strong>가입 전화번호 입력</strong>
 					<ul>
 						<li><button class="service_j_btn" id="SKT">SKT</button></li>
-						<li><button class="disable" id="KT" onclick="javascript:btn('서비스 준비중입니다.')">KT</button></li>
-						<li><button class="disable" id="LGU" onclick="javascript:btn('서비스 준비중입니다.')">LGU+</button></li>
+						<li><button class="service_j_btn" id="KTF">KT</button></li>
+						<li><button class="service_j_btn" id="LGT">LGU+</button></li>
 					</ul>
 
 					<div class="number number2">
@@ -980,17 +981,41 @@
 					</p>
 				</form>
 				</div>
-				<div class="agree_wrap">
+				<div class="agree_wrap" style="margin-bottom: 24px;padding-bottom: 0px;">
 					<p class="agree_txt02">
 						이용요금은 월 1,650원(VAT포함)이며, 매월 통신사 요금에 합산되어 청구됩니다.
 					</p>
 				</div>
+		<!--div class="pay_wrap">
+			<img class="phone_img" src="images/phone_on.png" alt="휴대폰 결제">
+			<img class="card_img" src="images/card_off.png" alt="카드 결제" style="margin-left: 12px;">
+		</div-->
 			<a href="#" class="agree_btn">서비스 가입</a>
 		</div>
+		<form name="payForm" accept-charset="euc-kr">
+			<input type="hidden" name="CASH_GB" value="MC">
+			<input type="hidden" name="MC_SVCID" value="241108151152">
+			<input type="hidden" name="PAY_MODE" value="10">
+			<input type="hidden" name="Prdtprice" value="1650">
+			<input type="hidden" name="Okurl" value="https://linksafe.kr/api/v1.0/mobilians/paycomplete">
+			<input type="hidden" name="Notiurl" value="https://linksafe.kr/api/v1.0/mobilians/savephone">
+			<input type="hidden" name="Prdtnm" value="휴대폰약속번호 서비스">
+			<input type="hidden" name="Siteurl" value="linksafe.kr">
+			<input type="hidden" name="Tradeid" value="">
+			<input type="hidden" name="LOGO_YN" value="N">
+			<input type="hidden" name="CALL_TYPE" value="SELF">
+			<input type="hidden" name="MC_No" id="MC_No" value="">
+			<input type="hidden" name="MC_DEFAULTCOMMID" id="MC_DEFAULTCOMMID" value="KTF">
+			<input type="hidden" name="MC_FIXCOMMID" id="MC_FIXCOMMID" value="KTF">
+			<input type="hidden" name="MC_AUTOPAY" value="Y">
+			<input type="hidden" name="MC_FIXNO" value="Y">
+			<input type="hidden" name="MSTR" value="">
+		</form>
 </body>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script type="text/javascript" src="js/popup_subscribe.js?20241120"></script>
+<script type="text/javascript" src="js/popup_subscribe_pg.js?20241120"></script>
 <script type="text/javascript" src="js/event_null.js?20241120"></script>
+<script src="https://mup.mobilians.co.kr/js/ext/ext_inc_comm.js"></script>
 <script language="javascript">
 	$(document).ready(function(){
 		$('#otpNumber').on('input', function() { this.value = this.value.replace(/[^0-9]/g, ''); });
@@ -1077,6 +1102,16 @@
 			event.target.style.display = "none";
 		}
 	};
+
+	function payRequest(){
+		//아래와 같이 ext_inc_comm.js에 선언되어 있는 함수를 호출
+		MCASH_PAYMENT(document.payForm);
+	}
+
+	function payRequestCN(){
+		//아래와 같이 ext_inc_comm.js에 선언되어 있는 함수를 호출
+		MCASH_PAYMENT(document.payFormCN);
+	}
 </script>
 
 <script>

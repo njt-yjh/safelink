@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dsqd.amc.linkedmo.mapper.CouponMapper">
+
+    <resultMap id="couponRequest" type="com.dsqd.amc.linkedmo.model.CouponRequest">
+        <id column="coupon_request_id" property="coupon_request_id" />
+        <result column="cooper_id" property="cooper_id" />
+        <result column="cooper_pw" property="cooper_pw" />
+        <result column="site_id" property="site_id" />
+        <result column="no_req" property="no_req" />
+        <result column="cooper_order" property="cooper_order" />
+        <result column="issue_count" property="issue_count" />
+        <result column="call_ctn" property="call_ctn" />
+        <result column="sender" property="sender" />
+        <result column="sender_id" property="sender_id" />
+        <result column="rcv_ctn" property="rcv_ctn" />
+        <result column="receiver" property="receiver" />
+        <result column="send_msg" property="send_msg" />
+        <result column="valid_start" property="valid_start" />
+        <result column="valid_end" property="valid_end" />
+        <result column="pay_id" property="pay_id" />
+        <result column="booking_no" property="booking_no" />
+        <result column="site_url" property="site_url" />
+        <result column="title" property="title" />
+        <result column="request_date" property="request_date" />
+    </resultMap>
+
+    <resultMap id="couponResponse" type="com.dsqd.amc.linkedmo.model.CouponResponse">
+        <id column="coupon_response_id" property="coupon_response_id" />
+        <result column="action" property="action" />
+        <result column="engine_id" property="engine_id" />
+        <result column="rt" property="rt" />
+        <result column="rtmsg" property="rtmsg" />
+        <result column="cooper_order" property="cooper_order" />
+        <result column="issue_count" property="issue_count" />
+        <result column="no_cpn" property="no_cpn" />
+        <result column="no_auth" property="no_auth" />
+        <result column="cpn_pw" property="cpn_pw" />
+        <result column="ts_id" property="ts_id" />
+        <result column="response_date" property="response_date" />
+    </resultMap>
+
+    <resultMap id="subscribe" type="com.dsqd.amc.linkedmo.model.Subscribe">
+        <id column="id" property="id" />
+        <result column="spcode" property="spcode" />
+        <result column="mobileno" property="mobileno" />
+        <result column="agree1" property="agree1" />
+        <result column="agree2" property="agree2" />
+        <result column="agree3" property="agree3" />
+        <result column="created_at" property="createDate" />
+        <result column="bFP" property="bFP" />
+        <result column="status" property="status" />
+        <result column="offercode" property="offercode" />
+        <result column="canceled_at" property="cancelDate" />
+        <result column="cancelcode" property="cncode" />
+        <result column="spuserid" property="spuserid" />
+    </resultMap>
+
+    <select id="getCouponTargetList" resultMap="subscribe">
+        select s.id,s.spcode,s.mobileno,s.status,s.agree1,s.agree2,s.agree3,s.bFP,s.linkno,s.created_at,s.updated_at,s.canceled_at,s.cancelcode,s.cancelmanager,s.cancelreason,s.offercode,s.spuserid
+        from subscribe s
+        inner join event_offercode eo on s.offercode = eo.offercode
+        where
+            date_format(s.created_at, '%Y-%m-%d') = date_format(
+                IF(now() = LAST_DAY(now()),
+                   LAST_DAY(date_sub(now(), interval 1 month)),
+                   date_sub(now(), interval 1 month)
+                ), '%Y-%m-%d'
+            )
+          and (s.canceled_at IS NULL OR date_format(s.canceled_at, '%Y-%m-%d') >= date_format(date_add(s.created_at, interval 1 month),'%Y-%m-%d'))
+          and IF(now() = LAST_DAY(now()),
+                 LAST_DAY(date_sub(now(), interval 1 month)),
+                 date_sub(now(), interval 1 month)
+              ) between eo.startdate and eo.enddate
+    </select>
+
+    <insert id="insertCouponRequest">
+        INSERT INTO coupon_request(cooper_id,cooper_pw,site_id,no_req,cooper_order,issue_count,call_ctn,sender,sender_id,rcv_ctn,receiver,send_msg,valid_start,valid_end,pay_id,booking_no,site_url,title)
+        VALUES (#{COOPER_ID},#{COOPER_PW},#{SITE_ID},#{NO_REQ},#{COOPER_ORDER},#{ISSUE_COUNT},#{CALL_CTN},#{SENDER},#{SENDER_ID},#{RCV_CTN},#{RECEIVER},#{SEND_MSG},#{VALID_START},#{VALID_END},#{PAY_ID},#{BOOKING_NO},#{SITE_URL},#{TITLE})
+    </insert>
+
+    <insert id="insertCouponResponse">
+        INSERT INTO coupon_response(`action`,engine_id,rt,rtmsg,cooper_order,issue_count,no_cpn,no_auth,cpn_pw,ts_id)
+        VALUES (#{action},#{engine_id},#{rt},#{rtmsg},#{cooper_order},#{issue_count},#{no_cpn},#{no_auth},#{cpn_pw},#{ts_id})
+    </insert>
+
+</mapper>

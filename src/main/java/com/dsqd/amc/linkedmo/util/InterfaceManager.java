@@ -37,7 +37,7 @@ public class InterfaceManager {
     private boolean checkHEAD;
     
     private String naruBToken;
-    private String testMobileno = "01062235635";
+    private String testMobileno = "01045273143";
     
     public void setTestMobileno(String mno) {
     	this.testMobileno = mno;
