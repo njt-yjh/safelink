@@ -607,6 +607,8 @@ public class SubscribeController {
 							mobiliansService.splitMstr(mobilians.getMstr(), tempData);
 							String spcode = tempData.getSpcode();
 
+							logger.info("spcode : {}", spcode);
+
 							JSONObject responseJSON = new JSONObject();
 							Subscribe data = Subscribe.builder().mobileno(mobilians.getNo()).spcode(spcode).build();
 							String msg = null;
