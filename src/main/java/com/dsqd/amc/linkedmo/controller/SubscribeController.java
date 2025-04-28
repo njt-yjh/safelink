@@ -603,8 +603,12 @@ public class SubscribeController {
 								return "SUCCESS";
 							}
 
+							Subscribe tempData = new Subscribe();
+							mobiliansService.splitMstr(mobilians.getMstr(), tempData);
+							String spcode = tempData.getSpcode();
+
 							JSONObject responseJSON = new JSONObject();
-							Subscribe data = Subscribe.builder().mobileno(mobilians.getNo()).spcode(mobilians.getCommid()).build();
+							Subscribe data = Subscribe.builder().mobileno(mobilians.getNo()).spcode(spcode).build();
 							String msg = null;
 							String result = null;	// KG모빌리언스 notiurl에서 리턴 값은 FAIL / SUCCESS 문자만 리턴.
 
